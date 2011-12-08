@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 #
 # core tests for sheep 
 #
@@ -58,6 +58,10 @@ test "$(get_md5_path b05403212c66bdc8ccc597fedf6cd5fe)" == "${SHEEP_DIR}/cache/m
 echo 'test file' > "${SHEEP_DIR}/cache/md5/b0/5403212c66bdc8ccc597fedf6cd5fe"
 verify_cached_file b05403212c66bdc8ccc597fedf6cd5fe
 echo 'bad test file' > "${SHEEP_DIR}/cache/md5/b0/5403212c66bdc8ccc597fedf6cd5fe"
-! verify_cached_file b05403212c66bdc8ccc597fedf6cd5fe
+! verify_cached_file b05403212c66bdc8ccc597fedf6cd5fe > /dev/null
 ! test -f "${SHEEP_DIR}/cache/md5/b0/5403212c66bdc8ccc597fedf6cd5fe"
 echo 'test file' > "${SHEEP_DIR}/cache/md5/b0/5403212c66bdc8ccc597fedf6cd5fe"
+test "$(machine_hash)" == "OS X
+10.7.2
+x86_64"
+

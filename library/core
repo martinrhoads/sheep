@@ -28,10 +28,10 @@ verify_cached_file() {
     local MD5=$1
     local file=$(get_md5_path $1)
 
-    if which md5sum ; then 
+    if which md5sum > /dev/null ; then 
 	md5_cmd=$(which md5sum)
 	md5_of_file=$($md5_cmd $file | awk '{print $1}')
-    elif which md5 ; then 
+    elif which md5 > /dev/null ; then 
 	md5_cmd=$(which md5)
 	md5_of_file=$($md5_cmd $file | awk '{print $4}' )
     else
@@ -50,21 +50,17 @@ verify_cached_file() {
 
 
 machine_hash() {
-    debug "generating machine machine_hash..."
-    local machine_hash=
-
     # figure out release version and add it to machine_hash
-    if which lsb_release ; then 
+    if which lsb_release > /dev/null ; then 
 	# we are probally on a linux box
-	machine_hash=${machine_hash}/$(lsb_release -is)
-	machine_hash=${machine_hash}/$(lsb_release -rs)
-    elif which sw_vers ; then 
-	machine_hash=${machine_hash}/$(sw_vers -productVersion)
+	echo -e "$(lsb_release -is)"
+	echo -e "$(lsb_release -rs)"
+    elif which sw_vers > /dev/null ; then 
+        echo -e "OS X"
+	echo -e "$(sw_vers -productVersion)"
     else
 	echo "Can not figure out system hash"
-	exit 1
+	return 1
     fi
-    
-    machine_hash=${machine_hash}/$(uname -m)
-
+    echo -e "$(uname -m)"
 }
