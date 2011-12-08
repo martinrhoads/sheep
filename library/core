@@ -1,0 +1,70 @@
+cd $(dirname $0)
+
+SHEEP_DIR=$(pwd)
+
+
+debug() {
+    if ! [[ -z "$DEVELOP" ]] ; then 
+        echo $1
+    fi     
+}
+
+
+get_md5_path() {
+  if test -z "$1" ; then 
+    return 1
+  fi
+  local md5=$1
+  echo "${SHEEP_DIR}/cache/md5/${md5:(-32):2}/${md5:2}"
+}
+
+
+verify_cached_file() {
+
+    if [[ -z "$1" ]]; then 
+        return 1
+    fi
+
+    local MD5=$1
+    local file=$(get_md5_path $1)
+
+    if which md5sum ; then 
+	md5_cmd=$(which md5sum)
+	md5_of_file=$($md5_cmd $file | awk '{print $1}')
+    elif which md5 ; then 
+	md5_cmd=$(which md5)
+	md5_of_file=$($md5_cmd $file | awk '{print $4}' )
+    else
+	echo "could not find md5 program"
+	return 1
+    fi
+
+
+    if ! [ "$MD5" == "$md5_of_file"  ] ; then 
+        echo md5 of $file was not correct
+        echo removing file, please run again
+        rm $file
+        return 1
+    fi 
+}
+
+
+machine_hash() {
+    debug "generating machine machine_hash..."
+    local machine_hash=
+
+    # figure out release version and add it to machine_hash
+    if which lsb_release ; then 
+	# we are probally on a linux box
+	machine_hash=${machine_hash}/$(lsb_release -is)
+	machine_hash=${machine_hash}/$(lsb_release -rs)
+    elif which sw_vers ; then 
+	machine_hash=${machine_hash}/$(sw_vers -productVersion)
+    else
+	echo "Can not figure out system hash"
+	exit 1
+    fi
+    
+    machine_hash=${machine_hash}/$(uname -m)
+
+}

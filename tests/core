@@ -11,6 +11,8 @@ test -d modules
 test -d library
 test -d tests
 test -d build
+test -d cache
+test -d cache/md5
 
 # verify binaries
 test -x sheep
@@ -19,3 +21,43 @@ test -x tests/true
 test -x tests/false
 test -x tests/core
 test -x build/commit
+
+# verify files
+test -f library/core
+
+# run sheep
+./sheep
+
+#
+# test core library functions
+#
+
+source library/core 
+
+
+# test environment variables
+test "$SHEEP_DIR" == $(pwd)
+
+
+# test debug function
+DEVELOP=
+output=$(debug "testing debug")
+test  "$output" == ""
+
+DEVELOP=1
+output=$(debug "testing debug")
+test  "$output" == "testing debug"
+
+
+# test get_md5_path
+! get_md5_path
+test "$(get_md5_path b05403212c66bdc8ccc597fedf6cd5fe)" == "${SHEEP_DIR}/cache/md5/b0/5403212c66bdc8ccc597fedf6cd5fe"
+
+# test verify_cached_file
+! verify_cached_file
+echo 'test file' > "${SHEEP_DIR}/cache/md5/b0/5403212c66bdc8ccc597fedf6cd5fe"
+verify_cached_file b05403212c66bdc8ccc597fedf6cd5fe
+echo 'bad test file' > "${SHEEP_DIR}/cache/md5/b0/5403212c66bdc8ccc597fedf6cd5fe"
+! verify_cached_file b05403212c66bdc8ccc597fedf6cd5fe
+! test -f "${SHEEP_DIR}/cache/md5/b0/5403212c66bdc8ccc597fedf6cd5fe"
+echo 'test file' > "${SHEEP_DIR}/cache/md5/b0/5403212c66bdc8ccc597fedf6cd5fe"

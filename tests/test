@@ -8,9 +8,10 @@ cd $(dirname $0)
 
 failed_tests=0
 tests_to_run=(
-    "true"
     "false"
+    "true"
     "core"
+    "false"
   )
 
 run_test() {
@@ -24,7 +25,7 @@ run_test() {
 }
 
 echo 
-echo about to run ${#tests_to_run[@]} tests:
+echo runing ${#tests_to_run[@]} tests:
 echo 
 
 for test in ${tests_to_run[@]}; do 
@@ -35,7 +36,8 @@ echo
 echo tests finished:\) 
 echo 
 echo ran ${#tests_to_run[@]} tests:
-echo -e "  $failed_tests \tfailed"
+echo
+echo -e "  $failed_tests \tfailed (two are supposed to fail)" 
 echo -e "  $(( ${#tests_to_run[@]} - failed_tests )) \tpassed"
 echo 
 

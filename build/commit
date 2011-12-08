@@ -9,9 +9,9 @@ cd $(dirname $0) && cd ..
 # run tests
 ./tests/test >> /dev/null
 
-if test $? -ne 1; then 
+if test $? -ne 2; then 
   echo 
-  echo "more than one test failed!!!"
+  echo "more than two tests failed!!!"
   echo "exiting..."
   exit 1
 fi
