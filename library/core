@@ -64,3 +64,19 @@ machine_hash() {
     fi
     echo -e "$(uname -m)"
 }
+
+wipe_envirionment() {
+
+  for i in $(env | awk -F"=" '{print $1}') ; do
+    # stupid google chrome
+    if echo $i | grep -q COM_GOOGLE_CHROME_FRAMEWORK_SERVICE_PROCESS ; then 
+      true
+    elif echo $i | grep -q ^PATH ; then  
+      true
+    else
+      unset $i 
+    fi
+  done
+
+  return 0
+}

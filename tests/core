@@ -67,3 +67,9 @@ test "$(machine_hash)" == "OS X
 10.7.2
 x86_64"
 
+# test wipe_envirionment
+export FOO=bar
+export BAR=baz
+wipe_envirionment
+test $(env | wc -l ) -le 3
+
