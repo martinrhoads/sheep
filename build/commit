@@ -19,7 +19,7 @@ fi
 echo "sheep tests passed"
 
 # verify commit message
-if test -z $1; then 
+if test -z "$1" ; then 
   echo "you did not provide a commit message as the first argument. exiting..."
   exit 1
 fi
