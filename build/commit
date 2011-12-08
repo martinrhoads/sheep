@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# commit command
+#
+
+# change into sheeps base dir
+cd $(dirname $0) && cd ..
+
+# run tests
+./tests/test >> /dev/null
+
+if test $? -ne 1; then 
+  echo 
+  echo "more than one test failed!!!"
+  echo "exiting..."
+  exit 1
+fi
+
+echo "sheep tests passed"
+
+# verify commit message
+if test -z $1; then 
+  echo "you did not provide a commit message as the first argument. exiting..."
+  exit 1
+fi
+
+
+# commit
+git add . 
+git commit -m "$1"
+
+echo commit done: $1

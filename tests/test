@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+# wrapper for sheep tests
+#
+
+# cd into my dir
+cd $(dirname $0)
+
+failed_tests=0
+tests_to_run=(
+    "true"
+    "false"
+    "core"
+  )
+
+run_test() {
+  eval ./$1
+  if test $? -eq 0; then 
+    echo "  passed: $test"
+  else 
+    echo "  failed: $test"
+    failed_tests=$((failed_tests + 1))
+  fi 
+}
+
+echo 
+echo about to run ${#tests_to_run[@]} tests:
+echo 
+
+for test in ${tests_to_run[@]}; do 
+  run_test $test
+done
+
+echo 
+echo tests finished:\) 
+echo 
+echo ran ${#tests_to_run[@]} tests:
+echo -e "  $failed_tests \tfailed"
+echo -e "  $(( ${#tests_to_run[@]} - failed_tests )) \tpassed"
+echo 
+
+exit $failed_tests

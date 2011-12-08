@@ -1,0 +1,21 @@
+#!/bin/bash -e
+#
+# core tests for sheep 
+#
+
+# change into sheeps base dir
+cd $(dirname $0) && cd ..
+
+# verify base directories
+test -d modules
+test -d library
+test -d tests
+test -d build
+
+# verify binaries
+test -x sheep
+test -x tests/test
+test -x tests/true
+test -x tests/false
+test -x tests/core
+test -x build/commit
