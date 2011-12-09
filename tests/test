@@ -6,6 +6,9 @@
 # cd into my dir
 cd $(dirname $0)
 
+# set sheep dir
+export SHEEP_DIR=$(dirname $(pwd))
+
 # get power to print colored output
 source ../library/core && colors
 
@@ -16,6 +19,7 @@ tests_to_run=(
     "true"
     "core"
     "modules"
+    "hash_store"
     "false"
 )
 
@@ -32,7 +36,7 @@ run_test() {
   local result=$?
 
   local time_taken=$((SECONDS - start_time)) # calculate run time
-  local test_output=$(printf "%10s\n" $test) # format test result output
+  local test_output=$(printf "%12s\n" $test) # format test result output
   local time_output=$(printf "%4ss\n" $time_taken) # format time result output
 
   # use red text for failed tests, green for successfull

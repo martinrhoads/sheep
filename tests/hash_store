@@ -1,0 +1,6 @@
+set -e
+
+cd $SHEEP_DIR
+
+test -d cache/hash_store
+test -d library/hash_store
