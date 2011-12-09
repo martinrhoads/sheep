@@ -34,13 +34,19 @@ echo ${txtblu} # set text to blue
 echo "runing ${#tests_to_run[@]} tests:"
 echo 
 
+# save the start time
+start_time=$(get_seconds)
+
 # run each test in the $tests_to_run variable
 for test in ${tests_to_run[@]}; do 
   run_test $test
 done
 
+# calculate runtime 
+seconds_taken=$(($(get_seconds) - start_time))
+
 echo ${txtblu} # set text to blue
-echo "ran ${#tests_to_run[@]} tests:"
+echo "ran ${#tests_to_run[@]} tests in $((seconds_taken / 60)) minutes $((seconds_taken % 60)) seconds:"
 echo ${txtred} # set text to red
 echo -e "  $failed_tests \tfailed (two are supposed to fail)" 
 echo -e "${txtgrn}  $(( ${#tests_to_run[@]} - failed_tests )) \tpassed"
