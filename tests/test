@@ -21,21 +21,39 @@ tests_to_run=(
 
 # we are going to use this when we run tests later
 run_test() {
+  
+  # rember start time
+  local start_time=$SECONDS
+
+  # run test
   eval ./$1
-  if test $? -eq 0; then 
-    echo -e "${txtgrn}  $test${txtrst}"
+
+  # save output
+  local result=$?
+
+  local time_taken=$((SECONDS - start_time)) # calculate run time
+  local test_output=$(printf "%15s\n" $test) # format test result output
+  local time_output=$(printf "%5ss\n" $time_taken) # format time result output
+
+  # use red text for failed tests, green for successfull
+  if test $result -eq 0; then 
+    echo -en "${txtgrn}$test_output${txtrst}"
   else 
-    echo -e "${txtred}  $test${txtrst}"
+    echo -n "${txtred}$test_output${txtrst}"
     failed_tests=$((failed_tests + 1))
   fi 
+
+  # use red for tests that take longer than 2 seconds, green otherwise
+  if test $time_taken -ge 2 ; then 
+    echo -e "${txtred}  $time_output${txtrst}"
+  else 
+    echo -e "${txtgrn}  $time_output${txtrst}"
+  fi
 }
 
 echo ${txtblu} # set text to blue
 echo "runing ${#tests_to_run[@]} tests:"
 echo 
-
-# save the start time
-start_time=$(get_seconds)
 
 # run each test in the $tests_to_run variable
 for test in ${tests_to_run[@]}; do 
@@ -43,10 +61,10 @@ for test in ${tests_to_run[@]}; do
 done
 
 # calculate runtime 
-seconds_taken=$(($(get_seconds) - start_time))
+seconds_taken=$SECONDS
 
 echo ${txtblu} # set text to blue
-echo "ran ${#tests_to_run[@]} tests in $((seconds_taken / 60)) minutes $((seconds_taken % 60)) seconds:"
+echo "ran ${#tests_to_run[@]} tests in $((SECONDS / 60)) minutes $((SECONDS % 60)) seconds:"
 echo ${txtred} # set text to red
 echo -e "  $failed_tests \tfailed (two are supposed to fail)" 
 echo -e "${txtgrn}  $(( ${#tests_to_run[@]} - failed_tests )) \tpassed"
