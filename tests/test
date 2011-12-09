@@ -22,15 +22,15 @@ tests_to_run=(
 run_test() {
   eval ./$1
   if test $? -eq 0; then 
-    echo "${txtgrn}  passed: $test${txtrst}"
+    echo -e "${txtgrn}\t$test${txtrst}"
   else 
-    echo "${txtred}  failed: $test${txtrst}"
+    echo -e "${txtred}\t$test${txtrst}"
     failed_tests=$((failed_tests + 1))
   fi 
 }
 
 echo 
-echo "${txtblu}${txtbld}runing ${#tests_to_run[@]} tests:${txtrst}"
+echo "${txtblu}runing ${#tests_to_run[@]} tests:${txtrst}"
 echo 
 
 for test in ${tests_to_run[@]}; do 
@@ -38,9 +38,7 @@ for test in ${tests_to_run[@]}; do
 done
 
 echo 
-echo "${txtblu}tests finished:\) "
-echo 
-echo "ran ${#tests_to_run[@]} tests:${txtrst}"
+echo "${txtblu}ran ${#tests_to_run[@]} tests:${txtrst}"
 echo
 echo -e "${txtred}  $failed_tests \tfailed (two are supposed to fail)" 
 echo -e "${txtgrn}  $(( ${#tests_to_run[@]} - failed_tests )) \tpassed"

@@ -69,7 +69,7 @@ wipe_envirionment() {
     # stupid google chrome
     if echo $i | grep -q COM_GOOGLE_CHROME_FRAMEWORK_SERVICE_PROCESS || \
        echo $i | grep -q ^PATH || \
-       echo $i | grep -q DEBUG
+       echo $i | grep -q DEVELOP
     then 
       true
     else
@@ -95,3 +95,4 @@ colors() {
   txtrst=$(tput sgr0)       # Text reset
 # got this from http://linuxtidbits.wordpress.com/2008/08/11/output-color-on-bash-scripts/
 }
+

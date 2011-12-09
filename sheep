@@ -2,7 +2,6 @@
 
 cd $(dirname $0)
 source library/core
-
 wipe_envirionment
-
+debug "getting started"
 
