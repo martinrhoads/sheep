@@ -71,5 +71,5 @@ x86_64"
 export FOO=bar
 export BAR=baz
 wipe_envirionment
-test $(env | wc -l ) -le 3
+test $(env | wc -l ) -le 5
 
