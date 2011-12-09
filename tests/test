@@ -3,29 +3,34 @@
 # wrapper for sheep tests
 #
 
+
+
 # cd into my dir
 cd $(dirname $0)
+
+source ../library/core && colors
 
 failed_tests=0
 tests_to_run=(
     "false"
     "true"
     "core"
+    "modules"
     "false"
   )
 
 run_test() {
   eval ./$1
   if test $? -eq 0; then 
-    echo "  passed: $test"
+    echo "${txtgrn}  passed: $test${txtrst}"
   else 
-    echo "  failed: $test"
+    echo "${txtred}  failed: $test${txtrst}"
     failed_tests=$((failed_tests + 1))
   fi 
 }
 
 echo 
-echo runing ${#tests_to_run[@]} tests:
+echo "${txtblu}${txtbld}runing ${#tests_to_run[@]} tests:${txtrst}"
 echo 
 
 for test in ${tests_to_run[@]}; do 
@@ -33,12 +38,12 @@ for test in ${tests_to_run[@]}; do
 done
 
 echo 
-echo tests finished:\) 
+echo "${txtblu}tests finished:\) "
 echo 
-echo ran ${#tests_to_run[@]} tests:
+echo "ran ${#tests_to_run[@]} tests:${txtrst}"
 echo
-echo -e "  $failed_tests \tfailed (two are supposed to fail)" 
-echo -e "  $(( ${#tests_to_run[@]} - failed_tests )) \tpassed"
+echo -e "${txtred}  $failed_tests \tfailed (two are supposed to fail)" 
+echo -e "${txtgrn}  $(( ${#tests_to_run[@]} - failed_tests )) \tpassed"
 echo 
 
 exit $failed_tests
