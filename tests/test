@@ -3,13 +3,13 @@
 # wrapper for sheep tests
 #
 
-
-
 # cd into my dir
 cd $(dirname $0)
 
+# get power to print colored output
 source ../library/core && colors
 
+# specify tests to run
 failed_tests=0
 tests_to_run=(
     "false"
@@ -17,30 +17,32 @@ tests_to_run=(
     "core"
     "modules"
     "false"
-  )
+)
 
+# we are going to use this when we run tests later
 run_test() {
   eval ./$1
   if test $? -eq 0; then 
-    echo -e "${txtgrn}\t$test${txtrst}"
+    echo -e "${txtgrn}  $test${txtrst}"
   else 
-    echo -e "${txtred}\t$test${txtrst}"
+    echo -e "${txtred}  $test${txtrst}"
     failed_tests=$((failed_tests + 1))
   fi 
 }
 
-echo 
-echo "${txtblu}runing ${#tests_to_run[@]} tests:${txtrst}"
+echo ${txtblu} # set text to blue
+echo "runing ${#tests_to_run[@]} tests:"
 echo 
 
+# run each test in the $tests_to_run variable
 for test in ${tests_to_run[@]}; do 
   run_test $test
 done
 
-echo 
-echo "${txtblu}ran ${#tests_to_run[@]} tests:${txtrst}"
-echo
-echo -e "${txtred}  $failed_tests \tfailed (two are supposed to fail)" 
+echo ${txtblu} # set text to blue
+echo "ran ${#tests_to_run[@]} tests:"
+echo ${txtred} # set text to red
+echo -e "  $failed_tests \tfailed (two are supposed to fail)" 
 echo -e "${txtgrn}  $(( ${#tests_to_run[@]} - failed_tests )) \tpassed"
 echo 
 

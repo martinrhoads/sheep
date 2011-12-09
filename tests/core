@@ -5,6 +5,7 @@
 
 # change into sheeps base dir
 cd $(dirname $0) && cd ..
+SHEEP_DIR=$(pwd)
 
 # verify base directories
 test -d modules
@@ -33,11 +34,6 @@ test -f library/core
 #
 
 source library/core 
-
-
-# test environment variables
-test "$SHEEP_DIR" == $(pwd)
-
 
 # test debug function
 DEVELOP=

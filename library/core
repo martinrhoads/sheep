@@ -1,6 +1,3 @@
-SHEEP_DIR=$(pwd)
-
-
 debug() {
     if ! [[ -z "$DEVELOP" ]] ; then 
         echo $1
@@ -69,7 +66,8 @@ wipe_envirionment() {
     # stupid google chrome
     if echo $i | grep -q COM_GOOGLE_CHROME_FRAMEWORK_SERVICE_PROCESS || \
        echo $i | grep -q ^PATH || \
-       echo $i | grep -q DEVELOP
+       echo $i | grep -q ^SHEEP_DIR || \
+       echo $i | grep -q ^DEVELOP
     then 
       true
     else
