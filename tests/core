@@ -36,11 +36,11 @@ test -f library/core
 source library/core 
 
 # test debug function
-DEVELOP=
+SHEEP_DEVELOP=
 output=$(debug "testing debug")
 test  "$output" == ""
 
-DEVELOP=1
+SHEEP_DEVELOP=1
 output=$(debug "testing debug")
 test  "$output" == "testing debug"
 

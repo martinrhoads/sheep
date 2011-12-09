@@ -1,5 +1,5 @@
 debug() {
-    if ! [[ -z "$DEVELOP" ]] ; then 
+    if ! [[ -z "$SHEEP_DEVELOP" ]] ; then 
         echo $1
     fi     
 }
@@ -67,7 +67,7 @@ wipe_envirionment() {
     if echo $i | grep -q COM_GOOGLE_CHROME_FRAMEWORK_SERVICE_PROCESS || \
        echo $i | grep -q ^PATH || \
        echo $i | grep -q ^SHEEP_DIR || \
-       echo $i | grep -q ^DEVELOP
+       echo $i | grep -q ^SHEEP_DEVELOP
     then 
       true
     else
