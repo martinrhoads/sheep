@@ -72,14 +72,13 @@ test $(env | wc -l ) -le 5
 
 # test parse_inputs
 unset FOO BAR_BAZ
-! parse_inputs
-! parse_inputs --foo
-! parse_inputs -foo bar
+! parse_inputs > /dev/null
+! parse_inputs --foo > /dev/null
+! parse_inputs -foo bar > /dev/null
 eval $(parse_inputs --foo bar)
 test $FOO == 'bar'
 unset FOO BAR_BAZ
 eval $(parse_inputs --foo bar --bar-baz biz )
-echo $(parse_inputs --foo bar --bar-baz biz )  
 test $FOO == 'bar'
 test $BAR_BAZ == 'biz'
-! parse_inputs --foo bar --bar-baz biz boo
+! parse_inputs --foo bar --bar-baz biz boo > /dev/null

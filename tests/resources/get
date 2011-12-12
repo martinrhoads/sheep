@@ -1,4 +1,2 @@
-echo in tests/resources/get
-
 cd $SHEEP_DIR
 source library/resources/get
