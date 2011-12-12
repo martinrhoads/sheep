@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-cd $(dirname $0)
+cd -P $(dirname $0)
 SHEEP_DIR=$(pwd)
 source library/core
 wipe_envirionment

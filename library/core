@@ -64,10 +64,11 @@ wipe_envirionment() {
 
   for i in $(env | awk -F"=" '{print $1}') ; do
     # stupid google chrome
-    if echo $i | grep -q COM_GOOGLE_CHROME_FRAMEWORK_SERVICE_PROCESS || \
-       echo $i | grep -q ^PATH || \
-       echo $i | grep -q ^SHEEP_DIR || \
-       echo $i | grep -q ^SHEEP_DEVELOP
+    if echo $i | grep -q 'COM_GOOGLE_CHROME_FRAMEWORK_SERVICE_PROCESS' || \
+       echo $i | grep -q '^PATH$' || \
+       echo $i | grep -q '^SHEEP_DIR$' || \
+       echo $i | grep -q '^SHEEP_DEVELOP$' || \
+       echo $i | grep -q '^_$'
     then 
       true
     else
@@ -94,6 +95,3 @@ colors() {
 # got this from http://linuxtidbits.wordpress.com/2008/08/11/output-color-on-bash-scripts/
 }
 
-get_seconds() {
-    echo $(date +%s)
-}

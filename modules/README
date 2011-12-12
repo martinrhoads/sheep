@@ -1,0 +1,7 @@
+Module provide a way to plugin your own sheep code which can benefit from:
+
+ - shared libraries
+ - resources
+ - assets
+
+To understand this better, take a look at the sample module. 
