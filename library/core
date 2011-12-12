@@ -94,3 +94,26 @@ colors() {
 # got this from http://linuxtidbits.wordpress.com/2008/08/11/output-color-on-bash-scripts/
 }
 
+
+parse_inputs() {
+  # this is a helper function to parse command line inputs
+
+  debug "called parse_inputs with: $* "
+
+  if ( test "${1:0:2}" == '--' ) && ! test -z $2 ; then
+    param=$(echo ${1:2} | sed 's/-/_/' | tr '[:lower:]' '[:upper:]' )
+    eval $param=$2
+    echo "$param=$2"
+    shift 2
+    if test $# -eq 0; then
+      return 0
+    fi
+    eval $FUNCNAME $@
+    return $?
+  fi
+
+  echo you did not format arguments properly
+  return 1
+
+}
+

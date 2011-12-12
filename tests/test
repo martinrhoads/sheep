@@ -21,6 +21,7 @@ tests_to_run=(
     "modules"
     "hash_store"
     "false"
+    "resources/get"
 )
 
 # we are going to use this when we run tests later

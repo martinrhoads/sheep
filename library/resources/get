@@ -1,0 +1,10 @@
+get() {
+    
+  declare -a local required_params=(
+    ["ORIGIN"]="http remote origin of a file"
+    ["MD5"]="MD5 sum of remote file"
+  )
+    
+    parse_inputs $@
+
+}

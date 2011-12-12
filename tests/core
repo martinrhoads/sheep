@@ -43,6 +43,7 @@ test  "$output" == ""
 SHEEP_DEVELOP=1
 output=$(debug "testing debug")
 test  "$output" == "testing debug"
+SHEEP_DEVELOP=
 
 
 # test get_md5_path
@@ -69,3 +70,16 @@ export BAR=baz
 wipe_envirionment
 test $(env | wc -l ) -le 5
 
+# test parse_inputs
+unset FOO BAR_BAZ
+! parse_inputs
+! parse_inputs --foo
+! parse_inputs -foo bar
+eval $(parse_inputs --foo bar)
+test $FOO == 'bar'
+unset FOO BAR_BAZ
+eval $(parse_inputs --foo bar --bar-baz biz )
+echo $(parse_inputs --foo bar --bar-baz biz )  
+test $FOO == 'bar'
+test $BAR_BAZ == 'biz'
+! parse_inputs --foo bar --bar-baz biz boo
