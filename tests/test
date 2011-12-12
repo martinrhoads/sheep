@@ -41,18 +41,21 @@ run_test() {
 
   # use red text for failed tests, green for successfull
   if test $result -eq 0; then 
-    echo -en "${txtgrn}$test_output${txtrst}"
+
+    echo -en "${txtgrn}$test_output"
+
+    # report time as red if tests take longer than 1 seconds, green otherwise
+    if test $time_taken -ge 1 ; then 
+      echo -e "${txtred} $time_output${txtrst}"
+    else 
+      echo -e " $time_output${txtrst}"
+    fi
+  
   else 
-    echo -n "${txtred}$test_output${txtrst}"
+    echo "${txtred}$test_output $time_output${txtrst}"
     failed_tests=$((failed_tests + 1))
   fi 
 
-  # use red for tests that take longer than 2 seconds, green otherwise
-  if test $time_taken -ge 2 ; then 
-    echo -e "${txtred} $time_output${txtrst}"
-  else 
-    echo -e "${txtgrn} $time_output${txtrst}"
-  fi
 }
 
 echo ${txtblu} # set text to blue
