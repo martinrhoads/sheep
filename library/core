@@ -10,7 +10,7 @@ get_md5_path() {
     return 1
   fi
   local md5=$1
-  echo "${SHEEP_DIR}/cache/md5/${md5:(-32):2}/${md5:2}"
+  echo "${SHEEP_DIR}/cache/md5/${md5:0:2}/${md5:2}"
 }
 
 
