@@ -1,6 +1,6 @@
 debug() {
     if ! [[ -z "$SHEEP_DEVELOP" ]] ; then 
-        echo $1
+        echo ${*}
     fi     
 }
 
