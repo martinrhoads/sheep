@@ -29,4 +29,4 @@ fi
 git add . 
 git commit -m " ${*} "
 
-echo commit done: $1
+echo commit done: $*
