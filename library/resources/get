@@ -1,10 +1,29 @@
 get() {
-    
-  declare -a local required_params=(
+  declare -A local required_params=(
     ["ORIGIN"]="http remote origin of a file"
     ["MD5"]="MD5 sum of remote file"
   )
-    
-    parse_inputs $@
+  unset ORIGIN MD5 # maybe we want to allow options to be passed through envs? 
+  eval parse_inputs $@
+  verify_inputs required_params
 
+return 0
+
+  if [[ -z $SHEEP_DEVELOP ]] ; then 
+      CURL_ARGS=' --silent '
+  fi
+  
+  echo curling \"curl --location --output ${CACHE_DIR}/${MD5} $ORIGIN   \"
+  if test -f ${CACHE_DIR}/${MD5} ; then 
+      debug "found file in local cache"
+  elif $( curl -o ${CACHE_DIR}/${MD5} $ORIGIN ) ; then 
+      debug "downloaded remote file"
+    else 
+      echo could not get remote file
+      return 1
+  fi
+  
+  # verify md5 of file in cache
+  verify_cached_file $MD5
+  
 }

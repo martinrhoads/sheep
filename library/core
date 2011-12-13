@@ -117,3 +117,27 @@ parse_inputs() {
 
 }
 
+
+verify_inputs() {
+  local array=$(eval echo $1)
+
+echo array = ${!array[@]}
+
+
+  local all_params=1
+  for i in ${!array[@]} ; do
+echo i = $i
+    # see if the variable name contained in $i exists
+    if test -z $(eval echo \$"$i") ; then
+      colors
+      echo -n ${txtred}you did not pass the option --$(echo $i | sed 's/_/-/' | tr '[:upper:]' '[:lower:]' ) which is the \"${required_params[$i]}\"
+      echo
+      unset all_params
+    fi
+
+  done
+  if test -z $all_params ; then
+    return 1
+  fi
+
+}

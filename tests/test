@@ -14,15 +14,20 @@ source ../library/core && colors
 
 # specify tests to run
 failed_tests=0
-tests_to_run=(
-    "false"
-    "true"
-    "core"
-    "modules"
-    "hash_store"
-    "false"
-    "resources/get"
-)
+if test -z $1 ; then 
+    tests_to_run=(
+        "false"
+        "true"
+        "core"
+        "modules"
+        "hash_store"
+        "false"
+        "resources/get"
+    )
+else 
+  tests_to_run=( "$1"  )
+fi
+
 
 # we are going to use this when we run tests later
 run_test() {
