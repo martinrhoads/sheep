@@ -6,8 +6,7 @@ cd $SHEEP_DIR
 source library/core
 source library/resources/get
 
-! get --origin foo --md5 bar extra-stuff > /dev/null
-! get
-! get --origin foo 
-get --origin foo --md5 bar 
-! get --origin foo --md5 bar asdfasdf > /dev/null
+origin='http://download.zeromq.org/zeromq-2.1.10.tar.gz'
+md5='f034096095fa76041166a8861e9d71b7'
+
+get --origin $origin --md5 $md5
