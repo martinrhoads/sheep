@@ -45,7 +45,7 @@ run_test() {
   local result=$?
 
   local time_taken=$((SECONDS - start_time)) # calculate run time
-  local test_output=$(printf "%12s\n" $test) # format test result output
+  local test_output=$(printf "%20s\n" $test) # format test result output
   local time_output=$(printf "%4ss\n" $time_taken) # format time result output
 
   # use red text for failed tests, green for successfull
