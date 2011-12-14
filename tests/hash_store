@@ -1,5 +1,5 @@
 set -e
-set -x
+#set -x
 
 cd $SHEEP_DIR
 source library/core
@@ -17,8 +17,12 @@ asd lknljn
 epinerkn erg
 erg'
 
-echo "$baz" | put_hash /test/foo
+echo "$baz" | put_hash test/foo
 test "$baz" == "$(cat ${SHEEP_HASHSTORE_DIR}/test/foo)"
 
 
+# test get_hash function 
+foo=$(get_hash test/foo)
+
+echo foo = $foo
 
