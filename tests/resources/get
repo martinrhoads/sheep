@@ -9,6 +9,10 @@ source library/resources/get
 origin='http://www.google.com/robots.txt'
 md5='c2295c698f6993c39899cf798808d458'
 
+! get > /dev/null 
+! get --origin $origin > /dev/null 
+
+
 rm -f $(get_md5_path $md5)
 get --origin $origin --md5 $md5 
 
