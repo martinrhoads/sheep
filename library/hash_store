@@ -1,6 +1,4 @@
-set -e
 SHEEP_HASHSTORE_DIR=$SHEEP_DIR/cache/hash_store
-cd $SHEEP_HASHSTORE_DIR
 
 get_hash() {
   if test -z $1 ; then 
@@ -37,7 +35,6 @@ put_hash() {
 }
 
 recursive_remove_if_empty() {
-echo in recurse
   if test -z "$1" || test -z "$2" ; then 
     echo "you did not provide proper arguments"
     return 1
