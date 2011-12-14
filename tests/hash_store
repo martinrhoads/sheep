@@ -26,7 +26,7 @@ test "$baz" == "$(get_hash test/foo)"
 
 # test delete function
 delete_hash test/bar > /dev/null
-delete_hash test/foo #> /dev/null
+delete_hash test/foo > /dev/null
 ! test -f $SHEEP_HASHSTORE_DIR/test/foo
 ! test -d $SHEEP_HASHSTORE_DIR/test
 
