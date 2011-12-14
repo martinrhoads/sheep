@@ -34,9 +34,18 @@ delete_hash test/foo > /dev/null
 echo foo | put_hash test/foo
 echo bar | put_hash test/test/bar
 
-set -x
-test "$(list_hashes /)" == "test/foo
-test/test/bar"
 
-test "$(list_hashes /test)" == "foo
-test/bar"
+test "$(list_hashes /)" == "
+found the following matches:
+
+test/foo
+test/test/bar
+test/test/blah"
+
+
+test "$(list_hashes /test)" == "
+found the following matches:
+
+foo
+test/bar
+test/blah"

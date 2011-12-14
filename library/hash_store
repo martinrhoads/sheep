@@ -83,20 +83,30 @@ list_hashes() {
   fi 
 
   if test -d $SHEEP_HASHSTORE_DIR/$1 ; then 
-    cd $SHEEP_HASHSTORE_DIR/$1
+    local query_dir="$SHEEP_HASHSTORE_DIR/$1"
   elif test -d $(dirname $SHEEP_HASHSTORE_DIR/$1) ; then 
-    cd "$(dirname $SHEEP_HASHSTORE_DIR/$1)"
+    local query_dir="$(dirname $SHEEP_HASHSTORE_DIR/$1)"
   else
+    echo 
     echo nothing matches that prefix
-    cd - 
     return 0
   fi
 
+  echo 
+  cd $query_dir
   matches="$(find . -type f)"
+  if test -z "$matches" ; then 
+    echo no matches were found 
+  else 
+    echo found the following matches:
+    echo
+  fi 
+
   for i in $matches ; do 
     echo ${i:2}
   done 
-
+  echo 
   cd - > /dev/null
+
   return 0
 }
