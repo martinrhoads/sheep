@@ -10,7 +10,7 @@ cd $(dirname $0)
 export SHEEP_DIR=$(dirname $(pwd))
 
 # get power to print colored output
-source ../library/core && colors
+source $SHEEP_DIR/library/core && colors
 
 # specify tests to run
 failed_tests=0
@@ -21,8 +21,8 @@ if test -z $1 ; then
         "core"
         "modules"
         "hash_store"
-        "false"
         "resources/get"
+        "false"
     )
 else 
   tests_to_run=( "$1"  )
@@ -34,6 +34,9 @@ run_test() {
   
   # rember start time
   local start_time=$SECONDS
+
+  # reset colors
+  echo -n ${txtrst}
 
   # run test
   eval ./$1

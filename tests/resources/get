@@ -1,3 +1,13 @@
+set -e
+
+
+
 cd $SHEEP_DIR
+source library/core
 source library/resources/get
 
+! get --origin foo --md5 bar extra-stuff > /dev/null
+! get
+! get --origin foo 
+get --origin foo --md5 bar 
+! get --origin foo --md5 bar asdfasdf > /dev/null

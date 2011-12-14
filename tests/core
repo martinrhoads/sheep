@@ -75,10 +75,33 @@ unset FOO BAR_BAZ
 ! parse_inputs > /dev/null
 ! parse_inputs --foo > /dev/null
 ! parse_inputs -foo bar > /dev/null
-eval $(parse_inputs --foo bar)
-test $FOO == 'bar'
-unset FOO BAR_BAZ
-eval $(parse_inputs --foo bar --bar-baz biz )
-test $FOO == 'bar'
-test $BAR_BAZ == 'biz'
-! parse_inputs --foo bar --bar-baz biz boo > /dev/null
+
+test -z $FOO
+test -z $BAR
+test -z $BAZ
+
+parse_inputs --foo bar --bar-baz biz 
+
+test "$FOO" == "bar"
+test "$BAR_BAZ" == "biz"
+
+
+unset ORIGIN MD5
+required_inputs=(
+'ORIGIN="http remote origin of a file"'
+'MD5="MD5 sum of remote file"'
+)
+parse_inputs --origin foo --md5 bar
+test "$ORIGIN" == 'foo'
+test "$MD5" == 'bar'
+test "${required_inputs[*]}" == ' '
+
+
+unset ORIGIN MD5
+required_inputs=(
+'ORIGIN="http remote origin of a file"'
+'MD5="MD5 sum of remote file"'
+)
+parse_inputs --origin foo 
+! test "${required_inputs[*]}" == ' '
+

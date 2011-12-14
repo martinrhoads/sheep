@@ -1,13 +1,24 @@
 get() {
-  declare -A local required_params=(
-    ["ORIGIN"]="http remote origin of a file"
-    ["MD5"]="MD5 sum of remote file"
-  )
-  unset ORIGIN MD5 # maybe we want to allow options to be passed through envs? 
-  eval parse_inputs $@
-  verify_inputs required_params
 
-return 0
+# these describe the options that we want the get resource to have.
+# on a successful run, the parse funtion will remove all values that are specified
+  required_inputs=(
+'ORIGIN="http remote origin of a file"'
+'MD5="MD5 sum of remote file"'
+)
+
+# parse command line inputs 
+parse_inputs $@
+
+# make sure that all required params were set
+if ! test "${required_inputs[*]}" == ' ' ; then 
+    echo all required inputs were not found. returning 1
+    return 1
+fi
+
+
+
+exit 0 
 
   if [[ -z $SHEEP_DEVELOP ]] ; then 
       CURL_ARGS=' --silent '
