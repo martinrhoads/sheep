@@ -68,7 +68,7 @@ run_test() {
 }
 
 echo ${txtblu} # set text to blue
-echo "runing ${#tests_to_run[@]} tests:"
+echo "running ${#tests_to_run[@]} tests:"
 echo 
 
 # run each test in the $tests_to_run variable
