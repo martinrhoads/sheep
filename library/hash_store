@@ -36,7 +36,46 @@ put_hash() {
 
 }
 
+recursive_remove_if_empty() {
+echo in recurse
+  if test -z "$1" || test -z "$2" ; then 
+    echo "you did not provide proper arguments"
+    return 1
+  fi
+
+  local deep_dir=$1
+  local stop_dir=$2
+
+  if test "$deep_dir" == "$stop_dir" ; then 
+    return 0
+  fi
+
+  if test  "$(ls -A $deep_dir)" ; then 
+    return 0
+  else 
+    rmdir $deep_dir
+    eval $FUNCNAME "$(dirname $deep_dir)" "$stop_dir"
+    return $?
+  fi
+  # should never run
+  return 1
+}
+
+
 delete_hash() {
-:
+  if test -z $1 ; then 
+    echo you did not provide a hash to delete!
+    return 1
+  fi
+
+  if ! test -f $SHEEP_HASHSTORE_DIR/$1 ; then 
+    echo the hash $1 does not exist
+    return 0
+  fi 
+  
+  echo removing hash $1
+  rm $SHEEP_HASHSTORE_DIR/$1
+  recursive_remove_if_empty "$(dirname $SHEEP_HASHSTORE_DIR/$1)" "$SHEEP_HASHSTORE_DIR"
+  return $?
 }
 

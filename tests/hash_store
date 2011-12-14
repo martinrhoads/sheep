@@ -22,7 +22,11 @@ test "$baz" == "$(cat ${SHEEP_HASHSTORE_DIR}/test/foo)"
 
 
 # test get_hash function 
-foo=$(get_hash test/foo)
+test "$baz" == "$(get_hash test/foo)"
 
-echo foo = $foo
+# test delete function
+delete_hash test/bar > /dev/null
+delete_hash test/foo #> /dev/null
+! test -f $SHEEP_HASHSTORE_DIR/test/foo
+! test -d $SHEEP_HASHSTORE_DIR/test
 
