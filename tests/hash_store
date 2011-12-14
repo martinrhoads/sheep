@@ -39,13 +39,16 @@ test "$(list_hashes /)" == "
 found the following matches:
 
 test/foo
-test/test/bar
-test/test/blah"
+test/test/bar"
 
 
 test "$(list_hashes /test)" == "
 found the following matches:
 
 foo
-test/bar
-test/blah"
+test/bar"
+
+test "$(list_hashes /asdlhoinm/lkwn)" == "
+nothing matches that prefix"
+delete_hash test/test/bar > /dev/null
+delete_hash test/foo > /dev/null 

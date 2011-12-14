@@ -89,6 +89,7 @@ list_hashes() {
   else
     echo 
     echo nothing matches that prefix
+    echo
     return 0
   fi
 
