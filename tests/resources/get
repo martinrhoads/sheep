@@ -6,9 +6,10 @@ cd $SHEEP_DIR
 source library/core
 source library/resources/get
 
-origin='http://download.zeromq.org/zeromq-2.1.10.tar.gz'
-md5='f034096095fa76041166a8861e9d71b7'
+origin='http://www.google.com/robots.txt'
+md5='c2295c698f6993c39899cf798808d458'
 
-get --origin $origin --md5 $md5
+rm -f $(get_md5_path $md5)
+get --origin $origin --md5 $md5 
 
 

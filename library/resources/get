@@ -34,7 +34,7 @@ get() {
 
   debug "trying to download file..."
   mkdir -p $(dirname $file_path )
-  curl --output $file_path $ORIGIN
+  curl --silent --output $file_path $ORIGIN
 
   if test $? -ne 0 ; then 
     echo "could not download file"
