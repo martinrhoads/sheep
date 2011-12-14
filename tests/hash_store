@@ -30,3 +30,13 @@ delete_hash test/foo > /dev/null
 ! test -f $SHEEP_HASHSTORE_DIR/test/foo
 ! test -d $SHEEP_HASHSTORE_DIR/test
 
+# test list
+echo foo | put_hash test/foo
+echo bar | put_hash test/test/bar
+
+set -x
+test "$(list_hashes /)" == "test/foo
+test/test/bar"
+
+test "$(list_hashes /test)" == "foo
+test/bar"

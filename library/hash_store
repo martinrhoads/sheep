@@ -76,3 +76,27 @@ delete_hash() {
   return $?
 }
 
+list_hashes() {
+  if test -z "$1"; then 
+    echo you did not provide a prefix to search 
+    return 1
+  fi 
+
+  if test -d $SHEEP_HASHSTORE_DIR/$1 ; then 
+    cd $SHEEP_HASHSTORE_DIR/$1
+  elif test -d $(dirname $SHEEP_HASHSTORE_DIR/$1) ; then 
+    cd "$(dirname $SHEEP_HASHSTORE_DIR/$1)"
+  else
+    echo nothing matches that prefix
+    cd - 
+    return 0
+  fi
+
+  matches="$(find . -type f)"
+  for i in $matches ; do 
+    echo ${i:2}
+  done 
+
+  cd - > /dev/null
+  return 0
+}
