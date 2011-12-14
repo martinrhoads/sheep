@@ -1,0 +1,34 @@
+set -e
+SHEEP_HASHSTORE_DIR=$SHEEP_DIR/cache/hash_store
+cd $SHEEP_HASHSTORE_DIR
+
+get_hash() {
+:
+}
+
+put_hash() {
+
+  if test -z $1 ; then 
+    echo you did not provide a keyname
+    return 1
+  fi
+
+  bar=
+  while read foo ; do 
+    if ! test -z "$bar"; then
+      bar+=$'\n'
+    fi 
+    bar+=$foo
+  done
+  echo bar = "$bar"
+
+  mkdir -p $SHEEP_HASHSTORE_DIR/$(dirname $1)
+  echo "$bar" > $SHEEP_HASHSTORE_DIR/$1
+
+  echo \$1 = $1
+}
+
+delete_hash() {
+:
+}
+

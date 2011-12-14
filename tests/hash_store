@@ -1,6 +1,24 @@
 set -e
+set -x
 
 cd $SHEEP_DIR
+source library/core
+source library/hash_store
+cd $SHEEP_HASHSTORE_DIR
 
-test -d cache/hash_store
-test -d library/hash_store
+
+test "$SHEEP_HASHSTORE_DIR" == "$SHEEP_DIR/cache/hash_store"
+
+
+# test put_hash function
+
+baz='asdf
+asd lknljn
+epinerkn erg
+erg'
+
+echo "$baz" | put_hash /test/foo
+test "$baz" == "$(cat ${SHEEP_HASHSTORE_DIR}/test/foo)"
+
+
+
