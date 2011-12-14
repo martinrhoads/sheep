@@ -60,9 +60,12 @@ echo 'bad test file' > "${SHEEP_DIR}/cache/md5/b0/5403212c66bdc8ccc597fedf6cd5fe
 echo 'test file' > "${SHEEP_DIR}/cache/md5/b0/5403212c66bdc8ccc597fedf6cd5fe"
 
 # test machine hash
-test "$(machine_hash)" == "OS X
+machine_hash="$(machine_hash)"
+test "$machine_hash" == 'OS X
 10.7.2
-x86_64"
+x86_64' || test "$machine_hash" == 'Ubuntu
+11.04
+x86_64'
 
 # test wipe_envirionment
 export FOO=bar
