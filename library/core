@@ -68,6 +68,7 @@ wipe_envirionment() {
        echo $i | grep -q '^PATH$' || \
        echo $i | grep -q '^SHELL$' || \
        echo $i | grep -q '^SHEEP_DIR$' || \
+       echo $i | grep -q '^SHEEP_MODULE_DIR$' || \
        echo $i | grep -q '^SHEEP_DEVELOP$' || \
        echo $i | grep -q '^_$'
     then 
@@ -95,7 +96,7 @@ colors() {
   txtrst=$(tput sgr0)       # Text reset
 # got this from http://linuxtidbits.wordpress.com/2008/08/11/output-color-on-bash-scripts/
 }
-
+colors
 
 parse_inputs() {
   # this is a helper function to parse command line inputs
@@ -118,4 +119,10 @@ parse_inputs() {
   return 1
 
 }
+
+source $SHEEP_DIR/library/modules
+
+for i in ` ls $SHEEP_DIR/library/resources `; do
+  source $SHEEP_DIR/library/resources/${i}
+done
 

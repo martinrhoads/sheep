@@ -26,8 +26,6 @@ test -x build/commit
 # verify files
 test -f library/core
 
-# run sheep
-./sheep
 
 #
 # test core library functions

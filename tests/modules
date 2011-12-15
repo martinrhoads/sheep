@@ -1,2 +1,8 @@
-#!/bin/bash 
+set -e
 
+test "$($SHEEP_DIR/sheep test help)" == 'in help module'
+! output="$($SHEEP_DIR/sheep test )" > /dev/null 
+echo $output | grep 'we were not passed proper args' > /dev/null
+echo $output | grep 'help' > /dev/null 
+test "$($SHEEP_DIR/sheep test | wc -l )" == "5" > /dev/null 
+  

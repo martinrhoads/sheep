@@ -1,0 +1,39 @@
+build() {
+
+  # these describe the options that we want the get resource to have.
+  # on a successful run, the parse funtion will remove all values that are specified
+    required_inputs=(
+'STEPS="a list of build steps"'
+'MD5="md5 of the source tarball"'
+'SPOT_CHECKS="a list of spot checks to run"'
+)
+
+  # parse command line inputs 
+  parse_inputs $@
+
+  # make sure that all required params were set
+  if ! test "${required_inputs[*]}" == ' ' ; then 
+    echo all required inputs were not found. returning 1
+    return 1
+  fi
+
+
+    
+  # verify md5 of file in cache
+  verify_cached_file $MD5
+
+# we'll put something here to skip builds if they are completed
+#  if ! [  -d root/lib  ] ; then
+      for i in "${STEPS[@]}" ; do
+          eval $i
+      done
+#  fi
+
+  debug "finished install. running spot checks..."
+
+  for i in "${CHECKS[@]}" ; do
+    eval $i
+  done
+
+  
+}

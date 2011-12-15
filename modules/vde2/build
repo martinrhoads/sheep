@@ -1,0 +1,26 @@
+ORIGIN="http://downloads.sourceforge.net/project/vde/vde2/2.3.2/vde2-2.3.2.tar.gz"
+MD5=d3f3e979558e396b8405c4613df9dfa0
+
+export destination=/home/martin/Dropbox/Public/sheep/plugins/kvm/root
+
+BUILD_STEPS=(
+    "rm -rf source root && mkdir -p source root"
+    "tar -xzvf ${CACHE_DIR}/${MD5} -C source"
+    "cd source/vde2-2.3.2"
+    "autoreconf -fi"
+    "./configure  --enable-experimental"
+#    "./configure --prefix=${destination} --enable-experimental"
+    "make && sudo  make install "
+#    "sudo make install"
+#    "make prefix=$destination install"
+)
+
+SPOT_CHECKS=(
+    "true"
+)
+
+debug "calling get for vde2 source"
+get  -o  $ORIGIN  -m $MD5
+
+debug "calling build for vde2 source"
+build -s BUILD_STEPS[@] -c SPOT_CHECKS[@] -m $MD5

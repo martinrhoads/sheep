@@ -1,2 +1,40 @@
+syntax() {
+  echo
+  echo "${txtred}we were not passed proper args in $(basename $(pwd)). Possible parameters are:${txtrst}"
+  echo "${txtblu}"
+  for i in $(find . -executable -type f | sed 's%./%%' | sed 's%/.*%%' | sort --unique); do 
+    echo "          $i"
+  done 
+  echo "${txtrst}"
+}
 
 
+cli() {
+
+  # exit if we were not passed any args
+  if test -z "$1" ; then
+    syntax
+    return 1
+  fi
+
+  # if arg1 is a directory, cd into it and recurse without arg1 in the arg list
+  if test -d $1 ; then
+    cd $1
+    shift
+    eval $FUNCNAME $@
+    return $?
+  fi
+
+  # if arg1 is a script, run it without arg1 in the arg list
+  if test -x $1 ; then
+    local script=$1
+    shift
+    eval ./$script $@
+    return $?
+  fi
+
+  # if we got here, we have an error
+  syntax
+  return 1
+
+}
