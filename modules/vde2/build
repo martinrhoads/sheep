@@ -21,6 +21,10 @@ BUILD_STEPS=(
     "make && make install "
 )
 
+NEW_BUILD_CHECKS=(
+    "test -f root/bin/vdecmd"
+)
+
 SPOT_CHECKS=(
     "true"
 )
@@ -29,4 +33,7 @@ debug "calling get for vde2 source"
 get --origin $ORIGIN --md5 $MD5
 
 debug "calling build for vde2 source"
-build --build-steps BUILD_STEPS[@] --spot-checks SPOT_CHECKS[@] --md5 $MD5
+build --build-steps BUILD_STEPS[@] \
+      --build-checks NEW_BUILD_CHECKS[@] \
+      --spot-checks SPOT_CHECKS[@] \
+      --md5 $MD5

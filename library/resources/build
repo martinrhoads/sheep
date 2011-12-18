@@ -7,6 +7,7 @@ build() {
   # on a successful run, the parse funtion will remove all values that are specified
     required_inputs=(
 'BUILD_STEPS="a list of build steps"'
+'BUILD_CHECKS="a list of checks to trigger a rebuild"'
 'MD5="md5 of the source tarball"'
 'SPOT_CHECKS="a list of spot checks to run"'
 )
@@ -19,6 +20,22 @@ build() {
   if ! test "$(${required_inputs[*]} | tr -d ' ')" == '' ; then 
     echo all required inputs were not found. returning 1
     return 1
+  fi
+
+  # dereference the array that was passed as the BUILD_CHECKS variable
+  declare -a build_checks=("${!BUILD_CHECKS}")
+
+  need_to_rebuild=
+  for i in "${build_checks[@]}"; do 
+    echo about to run $i
+    if ! `eval $i` ; then
+      need_to_rebuild=1
+    fi
+  done
+
+  if test -z $need_to_rebuild; then 
+    echo all build checks were ok so not building
+    return 0
   fi
 
   # dereference the array that was passed as the BUILD_STEPS variable
