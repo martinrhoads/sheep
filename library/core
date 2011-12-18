@@ -70,7 +70,7 @@ machine_hash() {
 wipe_envirionment() {
 
   for i in $(env | awk -F"=" '{print $1}') ; do
-    # stupid google chrome
+    # leave these variables as they are
     if echo $i | grep -q 'COM_GOOGLE_CHROME_FRAMEWORK_SERVICE_PROCESS' || \
        echo $i | grep -q '^PATH$' || \
        echo $i | grep -q '^SHELL$' || \

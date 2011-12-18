@@ -46,7 +46,7 @@ build() {
 
 # we'll put something here to skip builds if they are completed
 #  if ! [  -d root/lib  ] ; then
-  for i in "${build_steps[@]:1}" ; do
+  for i in "${build_steps[@]}" ; do
       echo i is $i
       eval $i
   done
@@ -57,7 +57,7 @@ build() {
   # dereference the array that was passed as the BUILD_STEPS variable
   declare -a spot_checks=("${!SPOT_CHECKS}")
 
-  for i in "${SPOT_CHECKS[@]:1}" ; do
+  for i in "${spot_checks[@]}" ; do
     eval $i
   done
   

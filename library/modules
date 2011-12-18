@@ -1,3 +1,6 @@
+
+# -*- mode: shell-script;  -*-
+
 syntax() {
   echo
   echo -n "${txtred}we were not passed proper args in $(basename $(pwd))."
@@ -28,9 +31,14 @@ cli() {
 
   # if arg1 is a script, run it without arg1 in the arg list
   if test -x $1 ; then
-    local script=$1
+    local script=$(pwd)/$1
     shift
-    eval . ./$script $@
+    if test -z $SHEEP_MODULE_DIR; then 
+      SHEEP_MODULE_DIR=$(pwd)
+    else 
+      cd $SHEEP_MODULE_DIR
+    fi
+    eval . $script $@
     return $?
   fi
 

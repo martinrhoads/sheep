@@ -8,24 +8,23 @@ MD5=d3f3e979558e396b8405c4613df9dfa0
 
 
 parse_inputs
-if test -z $DESTINATION ; then
-  DESTINATION=$(pwd)/root
-fi 
 
-BUILD_STEPS=(
+build_steps=(
+    "true"
     "rm -rf source root && mkdir -p source root"
     "tar -xzvf $(get_md5_path $MD5) -C source"
+    "echo pwd is $(pwd)"
     "cd source/vde2-2.3.2"
 #    "autoreconf -fi"
-    "./configure --prefix=${DESTINATION} --enable-experimental"
+    "./configure --prefix=$(pwd)/root --enable-experimental"
     "make && make install "
 )
 
-NEW_BUILD_CHECKS=(
+build_checks=(
     "test -f root/bin/vdecmd"
 )
 
-SPOT_CHECKS=(
+spot_checks=(
     "true"
 )
 
@@ -33,7 +32,7 @@ debug "calling get for vde2 source"
 get --origin $ORIGIN --md5 $MD5
 
 debug "calling build for vde2 source"
-build --build-steps BUILD_STEPS[@] \
-      --build-checks NEW_BUILD_CHECKS[@] \
-      --spot-checks SPOT_CHECKS[@] \
+build --build-steps build_steps[@] \
+      --build-checks build_checks[@] \
+      --spot-checks spot_checks[@] \
       --md5 $MD5

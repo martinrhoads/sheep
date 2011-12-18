@@ -2,10 +2,9 @@
 
 cd -P $(dirname $0)
 SHEEP_DIR=$(pwd)
-SHEEP_MODULE_DIR=$SHEEP_DIR/modules
 source library/core
 wipe_envirionment
 debug "getting started"
 
-cd $SHEEP_MODULE_DIR
+cd $SHEEP_DIR/modules
 cli $@
