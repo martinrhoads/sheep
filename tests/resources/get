@@ -1,13 +1,14 @@
+
+# -*- mode: shell-script;  -*-
+
 set -e
-
-
 
 cd $SHEEP_DIR
 source library/core
 source library/resources/get
 
-origin='http://www.google.com/robots.txt'
-md5='c2295c698f6993c39899cf798808d458'
+origin='http://ftp.ucsb.edu/robots.txt'
+md5='f71d20196d4caf35b6a670db8c70b03d'
 
 ! get > /dev/null 
 ! get --origin $origin > /dev/null 

@@ -1,6 +1,7 @@
 syntax() {
   echo
-  echo "${txtred}we were not passed proper args in $(basename $(pwd)). Possible parameters are:${txtrst}"
+  echo -n "${txtred}we were not passed proper args in $(basename $(pwd))."
+  echo  " Possible parameters are:${txtrst}"
   echo "${txtblu}"
   for i in $(find . -executable -type f | sed 's%./%%' | sed 's%/.*%%' | sort --unique); do 
     echo "          $i"
@@ -29,7 +30,7 @@ cli() {
   if test -x $1 ; then
     local script=$1
     shift
-    eval ./$script $@
+    eval . ./$script $@
     return $?
   fi
 

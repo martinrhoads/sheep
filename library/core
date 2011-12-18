@@ -1,3 +1,6 @@
+
+# -*- mode: shell-script;  -*-
+
 debug() {
     if ! [[ -z "$SHEEP_DEVELOP" ]] ; then 
         echo ${*}
@@ -15,13 +18,17 @@ get_md5_path() {
 
 
 verify_cached_file() {
-
     if [[ -z "$1" ]]; then 
         return 1
     fi
 
     local MD5=$1
     local file=$(get_md5_path $1)
+
+    if ! test -f "$file"; then 
+      debug "file $file does not exist."
+      return 1
+    fi 
 
     if which md5sum > /dev/null ; then 
 	md5_cmd=$(which md5sum)
@@ -114,10 +121,6 @@ parse_inputs() {
     eval $FUNCNAME $@
     return $?
   fi
-
-  echo you did not format arguments properly
-  return 1
-
 }
 
 source $SHEEP_DIR/library/modules
