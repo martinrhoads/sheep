@@ -73,6 +73,7 @@ wipe_envirionment() {
     # leave these variables as they are
     if echo $i | grep -q 'COM_GOOGLE_CHROME_FRAMEWORK_SERVICE_PROCESS' || \
        echo $i | grep -q '^PATH$' || \
+       echo $i | grep -q '^TERM$' || \
        echo $i | grep -q '^SHELL$' || \
        echo $i | grep -q '^SHEEP_DIR$' || \
        echo $i | grep -q '^SHEEP_MODULE_DIR$' || \

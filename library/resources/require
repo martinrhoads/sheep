@@ -1,0 +1,17 @@
+
+# -*- mode: shell-script;  -*-
+
+
+# this resource allows you to specify dependencies in modules. 
+# for example, it allows you to do something like: 
+#
+# require zeromq build 
+# or
+# require mysql start --bind-port 12345
+#
+# it ensures that the cwd is preserved by setting the SHEEP_MODULE_DIR variable
+
+require() {
+  # re-invoke sheep with our current arguments 
+  eval SHEEP_MODULE_DIR=$(pwd) $SHEEP_DIR/sheep $@
+}
