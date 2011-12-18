@@ -4,6 +4,8 @@ cd -P $(dirname $0)
 SHEEP_DIR=$(pwd)
 source library/core
 wipe_envirionment
+hash -r # clear out path hash
+hash -p $SHEEP_DIR/sheep sheep # allow sheep bin to be invoked without touching path
 debug "getting started"
 
 cd $SHEEP_DIR/modules
