@@ -8,7 +8,6 @@ build() {
     required_inputs=(
 'BUILD_STEPS="a list of build steps"'
 'BUILD_CHECKS="a list of checks to trigger a rebuild"'
-'MD5="md5 of the source tarball"'
 'SPOT_CHECKS="a list of spot checks to run"'
 )
 
@@ -40,9 +39,6 @@ build() {
 
   # dereference the array that was passed as the BUILD_STEPS variable
   declare -a build_steps=("${!BUILD_STEPS}")
-
-  # verify md5 of file in cache
-  verify_cached_file $MD5
 
 # we'll put something here to skip builds if they are completed
 #  if ! [  -d root/lib  ] ; then

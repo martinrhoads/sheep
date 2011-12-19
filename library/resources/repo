@@ -1,0 +1,32 @@
+
+# -*- mode: shell-script;  -*-
+
+repo() {
+    required_inputs=(
+'NAME="name of repo"'
+'ORIGIN="git origin of repo"'
+'SHA1="sha1 state of git repo"'
+'DESTINATION="path to export repo to"'
+)
+
+  # parse command line inputs 
+  parse_inputs $@
+
+  # make sure that all required params were set
+  if ! test "$(${required_inputs[*]} | tr -d ' ')" == '' ; then
+    echo all required inputs were not found. returning 1
+    return 1
+  fi
+
+  # clone repo if it does not exist 
+  if ! test -d $SHEEP_DIR/cache/repos/$NAME; then 
+    echo trying to download repo...
+    git clone --bare $ORIGIN $SHEEP_DIR/cache/repos/$NAME
+  fi
+
+  mkdir -p $DESTINATION 
+  git --git-dir=$SHEEP_DIR/cache/repos/sheep --work-tree=$DESTINATION checkout $SHA1
+  git --git-dir=$SHEEP_DIR/cache/repos/sheep --work-tree=$DESTINATION clean -fd
+  git --git-dir=$SHEEP_DIR/cache/repos/sheep --work-tree=$DESTINATION reset --hard 
+  
+}

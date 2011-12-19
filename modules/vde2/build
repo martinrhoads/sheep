@@ -34,5 +34,4 @@ get --origin $ORIGIN --md5 $MD5
 debug "calling build for vde2 source"
 build --build-steps build_steps[@] \
       --build-checks build_checks[@] \
-      --spot-checks spot_checks[@] \
-      --md5 $MD5
+      --spot-checks spot_checks[@] 

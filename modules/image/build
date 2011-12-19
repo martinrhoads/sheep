@@ -1,0 +1,48 @@
+# you need to make sure the following packages are installed 
+# ubuntu-virt-server ubuntu-vm-builder kvm-pxe bridge-utils syslinux squashfs-tools genisoimage libvde0 vde2 kvm
+
+release=natty
+version=2
+type=kvm
+vmname=ubuntu-psm-${type}-${release}-${version}
+
+rm -rf root && mkdir -p root
+
+#sudo virsh destroy $vmname
+#sudo virsh undefine $vmname
+
+declare -a build_steps=( "time sudo ubuntu-vm-builder $type $release \
+  --destdir /tmp/psm_$vmname \
+  --execscript $(pwd)/setup-server \
+  --tmpfs 2048 \
+  --domain ermal14.com \
+  --dest root/${vmname} \
+  --arch amd64 \
+  --hostname $vmname \
+  --mem 1024 \
+  --user test \
+  --pass test \
+  --ip 192.168.20.11 \
+  --mask 255.255.255.0 \
+  --net 192.168.20.11 \
+  --gw 192.168.20.1 \
+  --dns 8.8.8.8 \
+  --bcast 192.168.20.255 \
+  --bridge br0 \
+  --mirror http://64.13.163.15:3142/ubuntu \
+  --components main,universe,multiverse,restricted \
+  --addpkg acpid \
+  --addpkg vim \
+  --addpkg curl \
+  --addpkg wget \
+  --addpkg emacs23-nox \
+  --addpkg openssh-server \
+  --addpkg avahi-daemon \
+  --debug"
+)
+
+declare -a build_checks=(false)
+declare -a spot_checks=(true)
+build --build-steps build_steps[@] \
+      --build-checks build_checks[@] \
+      --spot-checks spot_checks[@] 
