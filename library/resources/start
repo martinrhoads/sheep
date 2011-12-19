@@ -34,7 +34,7 @@ start() {
   fi
 
   echo starting process... >> $LOG_FILE
-  $COMMAND >> $LOG_FILE 2>&1 &
+  $COMMAND echo "process returned $?" >> $LOG_FILE 2>&1 &
   echo $! | put_hash $key
   
 }
