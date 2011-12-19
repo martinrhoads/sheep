@@ -1,14 +1,13 @@
 
 # -*- mode: shell-script;  -*-
 
-start() {
+stop() {
 
 
   # these describe the options that we want the get resource to have.
   # on a successful run, the parse funtion will remove all values that are specified
     required_inputs=(
 'COMMAND="command to invoke"'
-'LOG_FILE="file to append output"'
 )
 
   # parse command line inputs 
@@ -28,13 +27,16 @@ start() {
     local pid=$(get_hash $key)
     echo pid is $pid
     if ps --pid $pid > /dev/null ; then 
-      echo process is already running
-      return 0
+      echo echo stoping process
+      kill $pid
+      delete_hash $key
+      return $?
     fi
+    echo deleting record
+    delete_hash $key
+    return 0
   fi
 
-  echo starting process...
-  $COMMAND >> $LOG_FILE 2>&1 &
-  echo $! | put_hash $key
-  
+  echo no record found for process
+  return 0  
 }
