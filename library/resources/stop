@@ -8,6 +8,7 @@ stop() {
   # on a successful run, the parse funtion will remove all values that are specified
     required_inputs=(
 'COMMAND="command to invoke"'
+'LOG_FILE="file to append output"'
 )
 
   # parse command line inputs 
@@ -27,8 +28,9 @@ stop() {
     local pid=$(get_hash $key)
     echo pid is $pid
     if ps --pid $pid > /dev/null ; then 
-      echo echo stoping process
+      echo  -n stoping process... >> $LOG_FILE
       kill $pid
+      echo  " done." >> $LOG_FILE
       delete_hash $key
       return $?
     fi
