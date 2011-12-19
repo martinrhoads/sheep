@@ -95,7 +95,7 @@ list_hashes() {
 
   echo 
   cd $query_dir
-  matches="$(find . -type f)"
+  matches="$(find . -type f | sort)"
   if test -z "$matches" ; then 
     echo no matches were found 
   else 

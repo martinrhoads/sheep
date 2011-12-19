@@ -78,6 +78,7 @@ wipe_envirionment() {
        echo $i | grep -q '^SHEEP_DIR$' || \
        echo $i | grep -q '^SHEEP_MODULE_DIR$' || \
        echo $i | grep -q '^SHEEP_DEVELOP$' || \
+       echo $i | grep -q '^SHEEP_INTERACTIVE$' || \
        echo $i | grep -q '^_$'
     then 
       true
@@ -111,9 +112,9 @@ parse_inputs() {
 
   debug "called parse_inputs with: $* "
 
-  if ( test "${1:0:2}" == '--' ) && ! test -z $2 ; then
+  if ( test "${1:0:2}" == '--' ) && ! test -z "$2" ; then
     param=$(echo ${1:2} | sed 's/-/_/' | tr '[:lower:]' '[:upper:]' )
-    eval $param=$2
+    eval $param=\"$2\"
     eval $( echo "required_inputs=( \"\${required_inputs[@]//$param=*/}\" ) " )
     shift 2
     if test $# -eq 0; then
@@ -125,6 +126,7 @@ parse_inputs() {
 }
 
 source $SHEEP_DIR/library/modules
+source $SHEEP_DIR/library/hash_store
 
 for i in ` ls $SHEEP_DIR/library/resources `; do
   source $SHEEP_DIR/library/resources/${i}

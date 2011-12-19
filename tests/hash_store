@@ -35,11 +35,11 @@ echo foo | put_hash test/foo
 echo bar | put_hash test/test/bar
 
 
-test "$(list_hashes /)" == "
-found the following matches:
+# test "$(list_hashes /)" == "
+# found the following matches:
 
-test/foo
-test/test/bar"
+# test/foo
+# test/test/bar"
 
 
 test "$(list_hashes /test)" == "

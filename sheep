@@ -1,6 +1,18 @@
 #!/bin/bash -e
 
-cd -P $(dirname $0)
+
+if test $0 == '-bash'; then 
+  if ! ( test -f sheep && test -x sheep ) ; then 
+    echo you should only be running this from the base sheep dir!!!
+    return 1
+  fi
+  SHEEP_INTERACTIVE=1
+  echo we are in interactive mode
+else 
+  SHEEP_INTERACTIVE=
+  cd -P $(dirname $0)
+fi 
+ 
 SHEEP_DIR=$(pwd)
 source library/core
 wipe_envirionment
@@ -8,5 +20,9 @@ hash -r # clear out path hash
 hash -p $SHEEP_DIR/sheep sheep # allow sheep bin to be invoked without touching path
 debug "getting started"
 
-cd $SHEEP_DIR/modules
-cli $@
+if test -z $SHEEP_INTERACTIVE; then 
+  cd $SHEEP_DIR/modules
+  cli $@
+  exit $?
+fi 
+

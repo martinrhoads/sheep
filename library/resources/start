@@ -1,0 +1,37 @@
+
+# -*- mode: shell-script;  -*-
+
+start() {
+
+
+echo \$1 is $1
+echo \$2 is $2
+echo \$3 is $3
+
+
+  # these describe the options that we want the get resource to have.
+  # on a successful run, the parse funtion will remove all values that are specified
+    required_inputs=(
+'COMMAND="command to invoke"'
+'LOG_FILE="file to append output"'
+)
+
+  # parse command line inputs 
+  parse_inputs "$@"
+
+  # make sure that all required params were set
+  if ! test "$(${required_inputs[*]} | tr -d ' ')" == '' ; then 
+    echo all required inputs were not found. returning 1
+    return 1
+  fi
+
+  echo COMMAND is "$COMMAND"
+  key=process/$(echo "$COMMAND" | base64)
+  echo key is $key
+
+  # check to see if key is in hash_store
+
+
+#  ("$COMMAND" 2>&1 > $LOG_FILE) &  
+  
+}
