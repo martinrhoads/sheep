@@ -1,0 +1,8 @@
+
+# -*- mode: shell-script;  -*-
+
+# this will be replaced with something like an api call
+
+if pgrep vde_switch >> /dev/null; then
+  sudo pkill vde_switch
+fi

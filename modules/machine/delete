@@ -1,0 +1,21 @@
+required_inputs=(
+  'HOSTNAME="hostname of the machine"'
+)
+
+# parse command line inputs 
+parse_inputs $@
+
+
+# make sure that all required params were set
+if ! test "$(${required_inputs[*]} | tr -d ' ')" == '' ; then 
+  echo all required inputs were not found. returning 1
+  return 1
+fi
+
+# TODO:Sanity checks for existing record.
+if get_hash /machines/$HOSTNAME; then
+  echo "deleting $HOSTNAME..."
+  delete_hash /machines/$HOSTNAME
+else
+  echo "machine not found."
+fi

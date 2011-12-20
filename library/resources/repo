@@ -25,8 +25,8 @@ repo() {
   fi
 
   mkdir -p $DESTINATION 
-  git --git-dir=$SHEEP_DIR/cache/repos/sheep --work-tree=$DESTINATION checkout $SHA1
-  git --git-dir=$SHEEP_DIR/cache/repos/sheep --work-tree=$DESTINATION clean -fd
-  git --git-dir=$SHEEP_DIR/cache/repos/sheep --work-tree=$DESTINATION reset --hard 
+  git --git-dir=$SHEEP_DIR/cache/repos/$NAME --work-tree=$DESTINATION clean -fd
+  git --git-dir=$SHEEP_DIR/cache/repos/$NAME --work-tree=$DESTINATION reset --hard 
+  git --git-dir=$SHEEP_DIR/cache/repos/$NAME --work-tree=$DESTINATION checkout $SHA1
   
 }

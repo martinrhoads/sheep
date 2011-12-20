@@ -1,0 +1,21 @@
+required_inputs=(
+  'SWITCH_NAME="name of the switch"'
+)
+
+# parse command line inputs 
+parse_inputs $@
+
+
+# make sure that all required params were set
+if ! test "$(${required_inputs[*]} | tr -d ' ')" == '' ; then 
+  echo all required inputs were not found. returning 1
+  return 1
+fi
+
+# TODO:Sanity checks for existing record.
+if get_hash /switches/$SWITCH_NAME > /dev/null; then
+  echo "deleting $SWITCH_NAME..."
+  delete_hash /switches/$SWITCH_NAME
+else
+  echo "switch not found."
+fi

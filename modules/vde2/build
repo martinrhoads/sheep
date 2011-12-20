@@ -11,12 +11,11 @@ parse_inputs
 
 build_steps=(
     "true"
-    "rm -rf source root && mkdir -p source root"
-    "tar -xzvf $(get_md5_path $MD5) -C source"
-    "echo pwd is $(pwd)"
-    "cd source/vde2-2.3.2"
+    "rm -rf vde2-2.3.2 root && mkdir -p  root"
+    "tar -xzvf $(get_md5_path $MD5) "
+    "cd vde2-2.3.2"
 #    "autoreconf -fi"
-    "./configure --prefix=$(pwd)/root --enable-experimental"
+    "./configure --prefix=$SHEEP_PARENT_MODULE_DIR/root --enable-experimental"
     "make && make install "
 )
 

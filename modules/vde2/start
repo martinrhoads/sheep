@@ -1,0 +1,40 @@
+
+# -*- mode: shell-script;  -*-
+
+set -e
+
+required_inputs=(
+  'SWITCH_NAME="unique name for this switch"'
+)
+
+# parse command line inputs 
+parse_inputs $@
+
+# make sure that all required params were set
+if ! test "$(${required_inputs[*]} | tr -d ' ')" == '' ; then 
+  echo all required inputs were not found. returning 1
+  return 1
+fi
+
+eval $(get_hash /switches/$SWITCH_NAME)
+
+execdir=$SHEEP_DIR/modules/vde2/root/bin
+
+if ! [ -S ${socket_dir}/ctl ]; then
+  echo "starting switch "
+  sudo $execdir/vde_switch -tap $tapname -daemon -s $socket_dir -M $management_socket -m 777
+  # This fails if the bridge is already created.  That's OK for now.
+  sudo brctl addbr $bridge || true
+  sudo ip link set $bridge up
+  sudo ip link set $tapname up
+  # This keeps adding Masquarading rules to IPTABLES.  TODO: only add one rule.
+  if [ "$masq" == "true" ]; then
+    echo "Turning on NAT"
+    sudo ifconfig $bridge $bridge_ip
+    sudo iptables -t nat -A POSTROUTING -o $public_iface -s $ip_block -j MASQUERADE
+    sudo iptables -A INPUT -i $bridge -j ACCEPT
+    sudo iptables -A OUTPUT -o $bridge -j ACCEPT
+  fi
+  sudo brctl addif $bridge $tapname || true
+  $execdir/slirpvde -socket $socket_dir -daemon -dhcp -network "$ip_block"
+fi

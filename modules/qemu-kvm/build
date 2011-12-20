@@ -1,1 +1,37 @@
-require_module vde2
+
+# -*- mode: shell-script;  -*-
+
+set -e
+
+# need to make sure glib2.0-dev is installed 
+
+# we depend on vde2 already being build
+require vde2 build 
+
+# we depend on an image already being build
+require image build
+
+repo --name qemu-kvm --origin git://git.kernel.org/pub/scm/virt/kvm/qemu-kvm.git --sha1 master --destination qemu-kvm
+
+build_steps=(
+  "cd qemu-kvm"
+  "./configure --prefix=$SHEEP_PARENT_MODULE_DIR/root --enable-vde --static \
+     --extra-ldflags=\" -L$SHEEP_PARENT_MODULE_DIR/root/lib -I$SHEEP_PARENT_MODULE_DIR/root/include\" "
+  " C_INCLUDE_PATH=$SHEEP_PARENT_MODULE_DIR/root/include  \
+     make"
+  "make install"
+  "ln -sf $SHEEP_PARENT_MODULE_DIR/root/bin/qemu-system-x86_64 $SHEEP_PARENT_MODULE_DIR/root/bin/qemu-kvm "
+  "ln -sf $SHEEP_PARENT_MODULE_DIR/root/bin/qemu-system-x86_64 $SHEEP_PARENT_MODULE_DIR/root/bin/qemu"
+ )
+
+build_checks=(
+  false 
+  false
+)
+
+spot_checks=(
+  "true"
+)
+
+debug "calling build for kvm source"
+build --build-steps build_steps[@] --build-checks build_checks[@] --spot-checks spot_checks[@]

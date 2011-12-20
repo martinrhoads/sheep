@@ -1,0 +1,37 @@
+required_inputs=(
+  'HOSTNAME="hostname of the machine"'
+)
+
+# parse command line inputs 
+parse_inputs $@
+
+set -x
+
+# make sure that all required params were set
+if ! test "$(${required_inputs[*]} | tr -d ' ')" == '' ; then 
+  echo all required inputs were not found. returning 1
+  return 1
+fi
+
+eval $(get_hash /machines/${HOSTNAME})
+eval $(get_hash /switches/${switch_name})
+
+# unless it's already running
+if ! kill -0 $(cat $pidfile); then
+
+  # clone the qcow image
+  $SHEEP_DIR/modules/qemu-kvm/root/bin/qemu-img create -f qcow2 -b $image $machine_disk
+
+  # build command line for each nic (doing 4)
+  net_command=""
+  for eth_num in 0 1 2 3
+  do
+    net_command=$net_command" -net vde,sock=$socket_dir,vlan=10$eth_num -net nic,model=virtio,vlan=10$eth_num,macaddr=${macaddress_eth[$eth_num]} "
+  done
+
+  # launch qemu-kvm 
+  $SHEEP_DIR/modules/qemu-kvm/root/bin/qemu-kvm -vnc $vnc_display -m $memory \
+    -hda $machine_disk \
+    $net_command \
+    -pidfile $pidfile -daemonize 
+fi

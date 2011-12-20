@@ -76,7 +76,7 @@ wipe_envirionment() {
        echo $i | grep -q '^TERM$' || \
        echo $i | grep -q '^SHELL$' || \
        echo $i | grep -q '^SHEEP_DIR$' || \
-       echo $i | grep -q '^SHEEP_MODULE_DIR$' || \
+       echo $i | grep -q '^SHEEP_PARENT_MODULE_DIR$' || \
        echo $i | grep -q '^SHEEP_DEVELOP$' || \
        echo $i | grep -q '^SHEEP_INTERACTIVE$' || \
        echo $i | grep -q '^_$'

@@ -33,10 +33,8 @@ cli() {
   if test -x $1 ; then
     local script=$(pwd)/$1
     shift
-    if test -z $SHEEP_MODULE_DIR; then 
-      SHEEP_MODULE_DIR=$(pwd)
-    else 
-      cd $SHEEP_MODULE_DIR
+    if test -z $SHEEP_PARENT_MODULE_DIR; then 
+      SHEEP_PARENT_MODULE_DIR=$(pwd)
     fi
     eval . $script $@
     return $?

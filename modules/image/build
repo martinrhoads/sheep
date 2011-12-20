@@ -6,17 +6,12 @@ version=2
 type=kvm
 vmname=ubuntu-psm-${type}-${release}-${version}
 
-rm -rf root && mkdir -p root
-
-#sudo virsh destroy $vmname
-#sudo virsh undefine $vmname
 
 declare -a build_steps=( "time sudo ubuntu-vm-builder $type $release \
-  --destdir /tmp/psm_$vmname \
   --execscript $(pwd)/setup-server \
   --tmpfs 2048 \
   --domain ermal14.com \
-  --dest root/${vmname} \
+  --dest $SHEEP_PARENT_MODULE_DIR/${vmname} \
   --arch amd64 \
   --hostname $vmname \
   --mem 1024 \
@@ -38,11 +33,20 @@ declare -a build_steps=( "time sudo ubuntu-vm-builder $type $release \
   --addpkg emacs23-nox \
   --addpkg openssh-server \
   --addpkg avahi-daemon \
+  --addpkg vlan \
   --debug"
+  "cd $SHEEP_PARENT_MODULE_DIR"
+  "mv $vmname/*.qcow2 $vmname.qcow2 "
+  "rm -rf $vmname"
 )
 
-declare -a build_checks=(false)
+declare -a build_checks=(
+  test -f $vmname.qcow2 
+)
+
+
 declare -a spot_checks=(true)
 build --build-steps build_steps[@] \
       --build-checks build_checks[@] \
       --spot-checks spot_checks[@] 
+

@@ -12,6 +12,7 @@
 # it ensures that the cwd is preserved by setting the SHEEP_MODULE_DIR variable
 
 require() {
+
   # re-invoke sheep with our current arguments 
-  eval SHEEP_MODULE_DIR=$(pwd) $SHEEP_DIR/sheep $@
+  eval SHEEP_PARENT_MODULE_DIR=$SHEEP_PARENT_MODULE_DIR $SHEEP_DIR/sheep $@
 }

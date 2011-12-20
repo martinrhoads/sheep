@@ -1,0 +1,19 @@
+
+required_inputs=(
+  'HOSTNAME="hostname of the machine"'
+)
+
+#eval $(get_hash /machines/$HOSTNAME)
+
+# parse command line inputs 
+parse_inputs $@
+
+
+# make sure that all required params were set
+if ! test "$(${required_inputs[*]} | tr -d ' ')" == '' ; then 
+  echo all required inputs were not found. returning 1
+  return 1
+fi
+
+
+kill $(cat $pidfile)

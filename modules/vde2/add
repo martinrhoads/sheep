@@ -1,0 +1,33 @@
+
+
+required_inputs=(
+  'SWITCH_NAME="unique name for this switch"'
+  'SOCKET_DIR="socket"'
+  'MANAGEMENT_SOCKET="management_socket"'
+  'TAPNAME="tapname"'
+  'BRIDGE="bridge"'
+  'MASQ="true"'
+  'BRIDGE_IP="bridge ip"'
+  'PUBLIC_IFACE="default public interface"'
+)
+
+# parse command line inputs 
+parse_inputs $@
+
+# make sure that all required params were set
+if ! test "$(${required_inputs[*]} | tr -d ' ')" == '' ; then 
+  echo all required inputs were not found. returning 1
+  return 1
+fi
+
+cat <<EOC | put_hash /switches/$SWITCH_NAME
+socket_dir=$SOCKET_DIR
+management_socket=$MANAGEMENT_SOCKET
+tapname=$TAPNAME
+bridge=$BRIDGE
+masq=$MASQ
+ip_block=$IP_BLOCK
+bridge_ip=$BRIDGE_IP
+default_public_iface=$PUBLIC_IFACE
+EOC
+
