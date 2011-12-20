@@ -1,0 +1,51 @@
+#!/bin/bash -ex 
+
+
+imagedir=$1
+
+# change home to be inside chroot
+export 
+
+perl -pi -e "s%^127.0.1.1.*\n%%" $imagedir/etc/hosts
+echo 'cloudboot' > $imagedir/etc/hostname
+echo '127.0.0.1 basebox basebox.local' >> /etc/hosts
+chroot $imagedir hostname cloudboot
+
+cd `dirname $0`
+cp install_chef.sh ${imagedir}/root/install_chef.sh
+chmod +x ${imagedir}/root/install_chef.sh
+sudo mount -t proc none ${imagedir}/proc
+chroot $imagedir mv /sbin/initctl /sbin/initctl.bak
+chroot $imagedir dpkg-divert --local --rename --add /sbin/initctl
+chroot $imagedir ln -s /bin/true /sbin/initctl
+chroot $imagedir apt-get update 
+chroot $imagedir apt-get install -y libffi5
+chroot $imagedir /root/install_chef.sh 
+
+# Script to grab the macaddress from ifconfig,
+# download the kickseed and strip everything but the post install hook,
+# run the post install on first boot,
+# reboot,
+# /etc/firstboot is executed on second boot (setup by kickseed).
+cat << EOF > $imagedir/root/seed.sh
+#!/bin/bash
+sed -i.orig -e 's/\/root\/seed.sh//' /etc/rc.local
+macaddress=\$(ifconfig | awk '/eth0/ { print \$5 }')
+curl http://192.168.20.11/machines/\${macaddress}/kickseed -o /root/kickseed
+sed -i.orig -n '1h; 1!H; \${ g; s/^.*%post --interpreter=/#/ p }' /root/kickseed
+chmod +x /root/kickseed
+/root/kickseed 2>&1 > /root/kickseed.log
+chmod +x /etc/firstboot
+/etc/init.d/networking restart
+#/root/firstboot 
+EOF
+chmod +x $imagedir/root/seed.sh
+
+cat << EOF >> $imagedir/etc/rc.local
+/root/seed.sh
+EOF
+sed -i -e 's/exit 0//' $imagedir/etc/rc.local
+
+chroot $imagedir mv /sbin/initctl.bak /sbin/initctl
+sync 
+sudo umount ${imagedir}/proc  
