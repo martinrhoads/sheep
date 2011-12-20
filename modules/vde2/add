@@ -8,6 +8,7 @@ required_inputs=(
   'BRIDGE="bridge"'
   'MASQ="true"'
   'BRIDGE_IP="bridge ip"'
+  'IP_BLOCK="block of ips to use"'
   'PUBLIC_IFACE="default public interface"'
 )
 
@@ -28,6 +29,6 @@ bridge=$BRIDGE
 masq=$MASQ
 ip_block=$IP_BLOCK
 bridge_ip=$BRIDGE_IP
-default_public_iface=$PUBLIC_IFACE
+public_iface=$PUBLIC_IFACE
 EOC
 
