@@ -107,15 +107,12 @@ colors() {
 }
 colors
 
-parse_inputs() {
+smart_parse() {
   # this is a helper function to parse command line inputs
-
-  debug "called parse_inputs with: $* "
-
+  debug "called smart_parse with: $* "
   if ( test "${1:0:2}" == '--' ) && ! test -z "$2" ; then
     param=$(echo ${1:2} | sed 's/-/_/' | tr '[:lower:]' '[:upper:]' )
     eval $param=\"$2\"
-    eval $( echo "required_inputs=( \"\${required_inputs[@]//$param=*/}\" ) " )
     shift 2
     if test $# -eq 0; then
       return 0
@@ -123,6 +120,26 @@ parse_inputs() {
     eval $FUNCNAME $@
     return $?
   fi
+}
+
+# make sure that all required params were set
+verify_inputs() {
+  local required_inputs=("${!1}")
+  unset_parameters=0
+  for i in "${required_inputs[@]}"; do 
+    variable=${i%%=*}
+    error_message="${i##*=}"
+    if eval test -z \$$variable; then 
+      if test $unset_parameters -eq 0; then 
+        echo "${txtred}the following required parameters were not set: ${txtrst}"
+        echo
+      fi
+      printf "${txtred}%20s" $variable
+      printf "${txtblu} %4s\n" "$error_message${txtrst}"
+      unset_parameters=`expr $unset_parameters + 1`
+    fi
+  done
+  return $unset_parameters
 }
 
 source $SHEEP_DIR/library/modules

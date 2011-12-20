@@ -3,6 +3,8 @@
 # core tests for sheep 
 #
 
+#set -x
+
 # change into sheeps base dir
 cd $(dirname $0) && cd ..
 export SHEEP_DIR=$(pwd)
@@ -71,17 +73,17 @@ export BAR=baz
 wipe_envirionment
 test $(env | wc -l ) -le 5
 
-# test parse_inputs
+# test smart_parse
 unset FOO BAR_BAZ
-! parse_inputs > /dev/null
-! parse_inputs --foo > /dev/null
-! parse_inputs -foo bar > /dev/null
+! smart_parse > /dev/null
+! smart_parse --foo > /dev/null
+! smart_parse -foo bar > /dev/null
 
 test -z $FOO
 test -z $BAR
 test -z $BAZ
 
-parse_inputs --foo bar --bar-baz biz 
+smart_parse --foo bar --bar-baz biz 
 
 test "$FOO" == "bar"
 test "$BAR_BAZ" == "biz"
@@ -89,20 +91,19 @@ test "$BAR_BAZ" == "biz"
 
 unset ORIGIN MD5
 required_inputs=(
-'ORIGIN="http remote origin of a file"'
-'MD5="MD5 sum of remote file"'
+  ORIGIN="http remote origin of a file"
+  MD5="MD5 sum of remote file"
 )
-parse_inputs --origin foo --md5 bar
+smart_parse --origin foo --md5 bar
 test "$ORIGIN" == 'foo'
 test "$MD5" == 'bar'
-test "${required_inputs[*]}" == ' '
+verify_inputs required_inputs[@]
 
 
 unset ORIGIN MD5
 required_inputs=(
-'ORIGIN="http remote origin of a file"'
-'MD5="MD5 sum of remote file"'
+  ORIGIN="http remote origin of a file"
+  MD5="MD5 sum of remote file"
 )
-parse_inputs --origin foo 
-! test "${required_inputs[*]}" == ' '
-
+smart_parse --origin foo 
+! verify_inputs required_inputs[@] > /dev/null

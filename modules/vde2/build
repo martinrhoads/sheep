@@ -6,9 +6,6 @@ set -e
 ORIGIN="http://downloads.sourceforge.net/project/vde/vde2/2.3.2/vde2-2.3.2.tar.gz"
 MD5=d3f3e979558e396b8405c4613df9dfa0
 
-
-parse_inputs
-
 build_steps=(
     "true"
     "rm -rf vde2-2.3.2 root && mkdir -p  root"

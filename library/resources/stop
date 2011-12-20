@@ -2,24 +2,21 @@
 # -*- mode: shell-script;  -*-
 
 stop() {
+    
+  required_inputs=(
+    COMMAND="command to invoke"
+    LOG_FILE="file to append output"
+  )
 
 
-  # these describe the options that we want the get resource to have.
-  # on a successful run, the parse funtion will remove all values that are specified
-    required_inputs=(
-'COMMAND="command to invoke"'
-'LOG_FILE="file to append output"'
-)
-
-  # parse command line inputs 
-  parse_inputs "$@"
-
-  # make sure that all required params were set
-  if ! test "$(${required_inputs[*]} | tr -d ' ')" == '' ; then 
-    echo all required inputs were not found. returning 1
+  # parse command line inputs and ensure all required inputs are set
+  smart_parse $@
+  if ! verify_inputs required_inputs[@]; then
+    echo
+    ./help
     return 1
   fi
-
+  
   key=process/$(echo "$COMMAND" | base64)
 
   # check to see if key is in hash_store

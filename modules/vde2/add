@@ -1,22 +1,19 @@
-
-
 required_inputs=(
-  'SWITCH_NAME="unique name for this switch"'
-  'SOCKET_DIR="socket"'
-  'MANAGEMENT_SOCKET="management_socket"'
-  'TAPNAME="tapname"'
-  'BRIDGE="bridge"'
-  'MASQ="true"'
-  'BRIDGE_IP="bridge ip"'
-  'PUBLIC_IFACE="default public interface"'
+  SWITCH_NAME="name of switch"
+  SOCKET_DIR="path to socket dir"
+  MANAGEMENT_SOCKET="management socket"
+  TAPNAME="tap intrface name"
+  BRIDGE="bridge name "
+  MASQ="do masquerading"
+  BRIDGE_IP="bridge ip"
+  PUBLIC_IFACE="public interface"
 )
 
-# parse command line inputs 
-parse_inputs $@
-
-# make sure that all required params were set
-if ! test "$(${required_inputs[*]} | tr -d ' ')" == '' ; then 
-  echo all required inputs were not found. returning 1
+# parse command line inputs and ensure all required inputs are set
+smart_parse $@
+if ! verify_inputs required_inputs[@]; then
+  echo
+  ./help
   return 1
 fi
 

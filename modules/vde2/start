@@ -4,15 +4,15 @@
 set -e
 
 required_inputs=(
-  'SWITCH_NAME="unique name for this switch"'
+  SWITCH_NAME="name of switch"
 )
 
-# parse command line inputs 
-parse_inputs $@
 
-# make sure that all required params were set
-if ! test "$(${required_inputs[*]} | tr -d ' ')" == '' ; then 
-  echo all required inputs were not found. returning 1
+# parse command line inputs and ensure all required inputs are set
+smart_parse $@
+if ! verify_inputs required_inputs[@]; then
+  echo
+  ./help
   return 1
 fi
 

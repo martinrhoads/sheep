@@ -2,20 +2,15 @@
 # -*- mode: shell-script;  -*-
 
 get() {
+  required_inputs=(
+    ORIGIN="asdf asdf"
+    MD5="md5 of remote file"
+  )
 
-  # these describe the options that we want the get resource to have.
-  # on a successful run, the parse funtion will remove all values that are specified
-    required_inputs=(
-'ORIGIN="http remote origin of a file"'
-'MD5="MD5 sum of remote file"'
-)
-
-  # parse command line inputs 
-  parse_inputs $@
-
-  # make sure that all required params were set
-  if ! test "${required_inputs[*]}" == ' ' ; then 
-    echo all required inputs were not found. returning 1
+  # parse command line inputs and ensure all required inputs are set
+  smart_parse $@
+  if ! verify_inputs required_inputs[@]; then
+    echo
     return 1
   fi
 
