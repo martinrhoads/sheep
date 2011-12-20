@@ -1,0 +1,18 @@
+this is where all of the logic for sheep is held.
+it is broken down into the following components:
+
+core 
+
+  core library functions for sheep 
+
+hash_store
+
+  hash_store library functions 
+
+modules 
+
+  module library functions 
+
+resources 
+
+  directory containg all of the resource functions

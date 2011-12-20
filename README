@@ -1,1 +1,29 @@
 This is sheep.
+
+Sheep provides a framework for accomplishing system tasks such as:
+
+  - compiling and packaging source code builds
+  - building images
+  - managing git repositories
+  - launching virtual instances (kvm)
+  - much more 
+
+It is designed with a modular architecture that allows you to hook in 
+your own modules which will benefit from the sheep core, such as:
+
+  - sheep resources:
+    - option parser
+    - remote file
+    - remote git repository
+    - build helper 
+    - package helper 
+    - require functionality
+    - testing framework
+
+You can start developing interactively by chaging into this directory
+and sourcing the sheep binary, like
+
+  source sheep 
+
+or you can run sheep in command line mode by simply invoking it. Call 
+it with no arguments to see what the avilable options are. 

@@ -1,0 +1,14 @@
+This file is intended to hold a few data stores for sheep internals. 
+
+hash_store
+
+  is for the internal hash store 
+
+md5
+
+  md5 based file store 
+
+repos
+
+  bare git repositories
+
