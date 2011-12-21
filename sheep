@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 
-if test $0 == '-bash'; then 
+if echo $0 | grep --quiet bash ; then 
   if ! ( test -f sheep && test -x sheep ) ; then 
     echo you should only be running this from the base sheep dir!!!
     return 1
