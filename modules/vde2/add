@@ -1,12 +1,13 @@
 required_inputs=(
-  SWITCH_NAME="name of switch"
-  SOCKET_DIR="path to socket dir"
-  MANAGEMENT_SOCKET="management socket"
-  TAPNAME="tap intrface name"
-  BRIDGE="bridge name "
-  MASQ="do masquerading"
+  SWITCH_NAME="unique name for this switch"
+  SOCKET_DIR="socket"
+  MANAGEMENT_SOCKET="management_socket"
+  TAPNAME="tapname"
+  BRIDGE="bridge"
+  MASQ="true"
   BRIDGE_IP="bridge ip"
-  PUBLIC_IFACE="public interface"
+  IP_BLOCK="block of ips to use"
+  PUBLIC_IFACE="default public interface"
 )
 
 # parse command line inputs and ensure all required inputs are set
@@ -25,6 +26,5 @@ bridge=$BRIDGE
 masq=$MASQ
 ip_block=$IP_BLOCK
 bridge_ip=$BRIDGE_IP
-default_public_iface=$PUBLIC_IFACE
+public_iface=$PUBLIC_IFACE
 EOC
-
