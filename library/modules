@@ -36,7 +36,7 @@ cli() {
     if test -z $SHEEP_PARENT_MODULE_DIR; then 
       SHEEP_PARENT_MODULE_DIR=$(pwd)
     fi
-    eval . $script $@
+    eval $script $@
     return $?
   fi
 

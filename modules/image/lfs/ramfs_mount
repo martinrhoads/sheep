@@ -1,0 +1,11 @@
+set -e
+
+if ! mount | grep --quiet $(pwd)/ramfs; then 
+  echo mounting ramdisk...
+  mkdir -p ramfs
+  sudo mount -t ramfs -o size=20m ramfs ramfs
+  sudo chown -R $USER ramfs
+else 
+  echo ramfs is already mounted
+fi
+

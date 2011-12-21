@@ -1,0 +1,9 @@
+set -e
+
+if mount | grep --quiet $(pwd)/ramfs; then 
+  echo unmounting ramfs...
+  sudo umount ramfs
+  . $0
+else 
+  echo ramfs is not mounted
+fi
