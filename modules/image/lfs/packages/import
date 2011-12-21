@@ -1,0 +1,28 @@
+set -e
+
+package_list=( $(curl --silent http://www.linuxfromscratch.org/lfs/view/development/wget-list | grep -v patch) )
+md5_list=( $(curl --silent http://www.linuxfromscratch.org/lfs/view/development/md5sums | grep -v patch) ) 
+
+package_list_size=${#package_list[@]}
+md5_list_size=${#md5_list[@]}
+
+for i in $(seq 0 $(expr $package_list_size - 1)); do 
+  origin=$(eval echo \${package_list[$i]})
+  echo -n "md5 for $origin is "
+  relative_md5_index=$(($i * 2 ))
+  md5=$(echo ${md5_list[$relative_md5_index]})
+  echo $md5
+  . ./add --origin $origin --md5 md5 || :
+
+done
+
+exit 1
+
+md5_array=
+#IFS="\n"
+for i in `curl --silent http://www.linuxfromscratch.org/lfs/view/development/md5sums `; do 
+  a=$(echo $i | awk '{print $1}')
+  b=$(echo $i | awk '{print $2}')
+  echo -n  "a is $a  "
+  echo "  b is $b"
+done

@@ -1,0 +1,66 @@
+required_inputs=(
+  ORIGIN="remote http origin"
+  MD5="md5 of remote package"
+)
+
+smart_parse $@
+
+if ! verify_inputs required_inputs[@]; then 
+  return 1
+fi
+
+
+# we are going to parse out what we need from the ORIGIN input to derive the rest of the inputs:
+filename=${ORIGIN##*/}             # use everything to the right of the last '/' to denote the filename
+shortname=${filename%%-*}          # from that, use everything to the left of the first '-' as the shortname
+compression_type=${filename##*.}   # get the file extention from what is to the right of the last '.'
+without_name=${filename##*-}       # remove the short name from the filename so we can get closer to the version
+version=${without_name%%.tar*}     # from there, take everything to the left of '.tar' as the version number
+untarred_name=${filename%%.tar*}     # from there, take everything to the left of '.tar' as the version number
+
+if test $compression_type == 'bz2'; then 
+  untar_command="tar -xjf $(get_md5_path $MD5) "
+else 
+  untar_command="tar -xzf $(get_md5_path $MD5) "
+fi
+
+if test -f $shortname; then 
+  echo file already exists for $shortname
+  return 1
+fi
+
+cat<<EOF>$shortname
+
+# -*- mode: shell-script;  -*-
+
+set -e
+
+ORIGIN=$ORIGIN
+MD5=$MD5
+
+build_steps=(
+  "rm -rf vde2-2.3.2 root && mkdir -p  root"
+  "$untar_command"
+  "cd $untarred_name"
+  "./configure --prefix=$SHEEP_PARENT_MODULE_DIR/root "
+  "make"
+  "make install "
+)
+
+build_checks=(
+    false
+)
+
+spot_checks=(
+    "true"
+)
+
+debug "calling get for vde2 source"
+get --origin \$ORIGIN --md5 \$MD5
+
+debug "calling build for vde2 source"
+build --build-steps build_steps[@] \
+      --build-checks build_checks[@] \
+      --spot-checks spot_checks[@] 
+EOF
+
