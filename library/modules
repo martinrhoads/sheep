@@ -6,7 +6,7 @@ syntax() {
   echo -n "${txtred}we were not passed proper args in $(basename $(pwd))."
   echo  " Possible parameters are:${txtrst}"
   echo "${txtblu}"
-  for i in $(find . -executable -type f | sed 's%./%%' | sed 's%/.*%%' | sort --unique); do 
+  for i in $(find . -type f -perm -o+x | sed 's%./%%' | sed 's%/.*%%' | sort --unique); do 
     echo "          $i"
   done 
   echo "${txtrst}"

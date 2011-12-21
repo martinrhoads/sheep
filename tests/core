@@ -71,7 +71,7 @@ x86_64'
 export FOO=bar
 export BAR=baz
 wipe_envirionment
-test $(env | wc -l ) -le 5
+test $(env | wc -l ) -le 8
 
 # test smart_parse
 unset FOO BAR_BAZ
