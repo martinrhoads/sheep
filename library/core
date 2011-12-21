@@ -134,7 +134,9 @@ verify_inputs() {
         echo "${txtred}the following required parameters were not set: ${txtrst}"
         echo
       fi
-      printf "${txtred}%20s" $variable
+      user_friendly_name=$(echo $variable | sed 's/_/-/g' | tr '[:upper:]' '[:lower:]' )
+      user_friendly_name="--$user_friendly_name"
+      printf "${txtred}%20s" $user_friendly_name
       printf "${txtblu} %4s\n" "$error_message${txtrst}"
       unset_parameters=`expr $unset_parameters + 1`
     fi
