@@ -17,11 +17,11 @@ build_steps=(
 )
 
 build_checks=(
-    false
+  "test -f $ramfs_mount_point/tools/lib/libmpfr.so.4"
 )
 
 spot_checks=(
-    "true"
+  "test -f $ramfs_mount_point/tools/lib/libmpfr.so.4"
 )
 
 debug "calling get for mpfr source"

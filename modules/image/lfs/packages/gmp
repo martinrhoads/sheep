@@ -17,7 +17,7 @@ build_steps=(
 )
 
 build_checks=(
-    false
+    "test -f $ramfs_mount_point/tools/lib/libgmp.so.10"
 )
 
 spot_checks=(

@@ -2,6 +2,7 @@
 # -*- mode: shell-script;  -*-
 set -e
 
+
 export MAKEFLAGS='-j 24'
 export LFS=$(pwd)/ramfs
 export LFS_TGT=$(uname -m)-lfs-linux-gnu
@@ -9,6 +10,7 @@ export ramfs_mount_point=$(pwd)/ramfs
 
 ./ramfs_mount
 mkdir -p ramfs/tools/lib
+origional_dir=$(pwd)
 
 if ! test -d $ramfs_mount_point/.git; then 
   cd $ramfs_mount_point/
@@ -18,7 +20,7 @@ if ! test -d $ramfs_mount_point/.git; then
   echo 'source*' >> .gitignore 
   git add . 
   git commit -m 'first commit'
-  cd --
+  cd $origional_dir
 fi
 
 # make sure we have a symlink in /tools pointing into local tools directory 
@@ -32,10 +34,10 @@ if ! test -e /tools/lib64 && test "$(uname -m)" == x86_64; then
 fi
 
 package_list=(
-#  binutils
-#  mpfr
-#  gmp
-#  mpc
+  binutils
+  mpfr
+  gmp
+  mpc
   gcc
 )
 
@@ -43,10 +45,12 @@ set -x
 
 for package in ${package_list[@]}; do 
 echo package is $package
-  require image lfs build_package $package
+echo pwd is $(pwd)
+  cd $origional_dir
+  . ./packages/$package
   cd $ramfs_mount_point 
   git add . 
-  git commit -m "built package $package" >> /dev/null
-  cd -
+  git commit -m "built package $package" >> /dev/null || :
+  cd $origional_dir
 done
 
