@@ -1,10 +1,12 @@
 
 required_inputs=(
-  HOSTNAME=somehostname
+  VM_NAME=somehostname
   IMAGE=/path/to/image
   MEMORY="how much memory to give the vm"
+  MACHINE_DISK="the machines disk"
   VNC_DISPLAY="some desc"
   SWITCH_NAME="name of switch"
+  PIDFILE="pidfile"
 )
 
 # parse command line inputs and ensure all required inputs are set
@@ -26,8 +28,8 @@ generate_mac() {
 
 
 # TODO:Sanity checks for existing record.
-if get_hash /machines/$HOSTNAME > /dev/null; then
-  echo "Machine record for $HOSTNAME already exists.  Exiting..."
+if get_hash /machines/$VM_NAME > /dev/null; then
+  echo "Machine record for $VM_NAME already exists.  Exiting..."
   return 1
 fi
 
@@ -36,9 +38,9 @@ cat <<EOC | put_hash /machines/$HOSTNAME
 image=$IMAGE
 memory=$MEMORY
 vnc_display=$VNC_DISPLAY
-hostname=$HOSTNAME
-machine_disk=/var/tmp/${HOSTNAME}.disk
-pidfile=/var/tmp/${HOSTNAME}.pid
+vm_name=$VM_NAME
+machine_disk=$MACHINE_DISK
+pidfile=$PIDFILE
 switch_name=$SWITCH_NAME
 macaddress_eth[0]=$(generate_mac)
 macaddress_eth[1]=$(generate_mac)

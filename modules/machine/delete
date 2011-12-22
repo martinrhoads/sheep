@@ -1,5 +1,5 @@
 required_inputs=(
-  HOSTNAME="hostname of machine"
+  VM_NAME="hostname of machine"
 )
 
 # parse command line inputs and ensure all required inputs are set
@@ -11,9 +11,9 @@ if ! verify_inputs required_inputs[@]; then
 fi
 
 # TODO:Sanity checks for existing record.
-if get_hash /machines/$HOSTNAME; then
+if get_hash /machines/$VM_NAME; then
   echo "deleting $HOSTNAME..."
-  delete_hash /machines/$HOSTNAME
+  delete_hash /machines/$VM_NAME
 else
   echo "machine not found."
 fi

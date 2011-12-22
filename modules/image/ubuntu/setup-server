@@ -8,7 +8,7 @@ export
 perl -pi -e "s%^127.0.1.1.*\n%%" $imagedir/etc/hosts
 echo 'psm' > $imagedir/etc/hostname
 echo '127.0.0.1 psm.local psm' >> $imagedir/etc/hosts
-chroot $imagedir hostname psm
+#chroot $imagedir hostname psm
 
 cs_chef_dir=/home/jeremy/cs-chef
 mkdir ${imagedir}/root/cs-chef

@@ -1,6 +1,6 @@
 set -x
 required_inputs=(
-  HOSTNAME='hostname of machine'
+  VM_NAME='hostname of machine'
 )
 
 # parse command line inputs and ensure all required inputs are set

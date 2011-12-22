@@ -1,5 +1,5 @@
 required_inputs=(
-  HOSTNAME="hostname of machine"
+  VM_NAME="hostname of machine"
 )
 
 
@@ -12,7 +12,7 @@ if ! verify_inputs required_inputs[@]; then
 fi
 
 
-eval $(get_hash /machines/${HOSTNAME})
+eval $(get_hash /machines/${VM_NAME})
 eval $(get_hash /switches/${switch_name})
 
 # unless it's already running
