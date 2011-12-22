@@ -22,7 +22,7 @@ vmname=ubuntu-${TYPE}-${hypervisor}-${release}-${version}
 
 if [ "$TYPE" = "psm" ]; then
 declare -a build_steps=( "time sudo ubuntu-vm-builder $hypervisor $release \
-  --execscript ${DEST}/setup-server \
+  --execscript $(pwd)/setup-server \
   --tmpfs 2048 \
   --domain ermal14.com \
   --dest $DEST/${vmname} \
