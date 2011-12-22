@@ -69,6 +69,9 @@ machine_hash() {
 
 wipe_envirionment() {
 
+## looks like we can just do something like:
+# exec env -i HOME=$HOME TERM=$TERM PS1='\u:\w\$ ' /bin/bash
+
   for i in $(env | awk -F"=" '{print $1}') ; do
     # leave these variables as they are
     if echo $i | grep -q 'COM_GOOGLE_CHROME_FRAMEWORK_SERVICE_PROCESS' || \

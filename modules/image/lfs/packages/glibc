@@ -13,6 +13,8 @@ PATCH2_ORIGIN=http://www.linuxfromscratch.org/patches/lfs/development/glibc-2.14
 PATCH2_MD5=4f110dc9c8d4754fbda841492ce796b4
 
 build_steps=(
+  "export PATH=/tools/x86_64-lfs-linux-gnu/bin:$PATH"
+  "echo which gcc is \$(which gcc)"
   "rm -rf ramfs/source/glibc-2.14.1 ramfs/source/glibc_build&& mkdir -p ramfs/source/glibc_build"
   "cd ramfs/source"
   "tar -xjf $(get_md5_path $MD5) "
