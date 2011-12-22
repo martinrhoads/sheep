@@ -1,0 +1,50 @@
+
+# -*- mode: shell-script;  -*-
+
+set -e
+
+ORIGIN=http://ftp.gnu.org/gnu/glibc/glibc-2.14.1.tar.bz2
+MD5=5869a2620c6917dd392289864c6ce595
+
+PATCH1_ORIGIN=http://www.linuxfromscratch.org/patches/lfs/development/glibc-2.14.1-gcc_fix-1.patch
+PATCH1_MD5=d1f28cb98acb9417fe52596908bbb9fd
+
+PATCH2_ORIGIN=http://www.linuxfromscratch.org/patches/lfs/development/glibc-2.14.1-cpuid-1.patch
+PATCH2_MD5=4f110dc9c8d4754fbda841492ce796b4
+
+build_steps=(
+  "rm -rf ramfs/source/glibc-2.14.1 ramfs/source/glibc_build&& mkdir -p ramfs/source/glibc_build"
+  "cd ramfs/source"
+  "tar -xjf $(get_md5_path $MD5) "
+  "cd glibc-2.14.1"
+  "patch -Np1 -i $(get_md5_path $PATCH1_MD5)"
+  "patch -Np1 -i $(get_md5_path $PATCH2_MD5)"
+  "cd ../glibc_build"
+  " ../glibc-2.14.1/configure --prefix=/tools \
+    --host=$LFS_TGT --build=\$(../glibc-2.14.1/scripts/config.guess) \
+    --disable-profile --enable-add-ons \
+    --enable-kernel=2.6.25 --with-headers=/tools/include \
+    libc_cv_forced_unwind=yes libc_cv_c_cleanup=yes"
+  "make"
+  "make install "
+)
+
+#  "CFLAGS='-U_FORTIFY_SOURCE -O2' ../glibc-2.14.1/configure --prefix=/tools \
+
+
+build_checks=(
+    false
+)
+
+spot_checks=(
+    "true"
+)
+
+debug "calling get for glibc source"
+get --origin $ORIGIN --md5 $MD5
+get --origin $PATCH1_ORIGIN --md5 $PATCH1_MD5
+get --origin $PATCH2_ORIGIN --md5 $PATCH2_MD5
+
+
+debug "calling build for vde2 source"
+build --build-steps build_steps[@]       --build-checks build_checks[@]       --spot-checks spot_checks[@] 

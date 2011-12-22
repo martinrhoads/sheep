@@ -39,9 +39,10 @@ package_list=(
   gmp
   mpc
   gcc
+  linux
+  glibc
 )
 
-set -x
 
 for package in ${package_list[@]}; do 
 echo package is $package

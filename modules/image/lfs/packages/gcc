@@ -35,6 +35,8 @@ build_steps=(
   "mv ../gmp-5.0.2 mpc"
   "mv ../mpc-0.9 mpc"
   "patch -Np1 -i $(get_md5_path $GCC_PATCH_MD5)"
+  "cp -v gcc/Makefile.in{,.orig}"
+  "sed 's@\./fixinc\.sh@-c true@' gcc/Makefile.in.orig > gcc/Makefile.in"
   "cd ../gcc_build"
   "CPLUS_INCLUDE_PATH=/tools/x86_64-unknown-linux-gnu \
     C_INCLUDE_PATH=/tools/x86_64-unknown-linux-gnu \
@@ -52,11 +54,10 @@ build_steps=(
     C_INCLUDE_PATH=/tools/x86_64-unknown-linux-gnu \
     make"
   "make install "
-  "cd /tools/lib/gcc/x86_64-lfs-linux-gnu/4.6.2"
-  "ln -sv libgcc.a libgcc_eh.a"
+  "/tools/bin/x86_64-lfs-linux-gnu-gcc -print-libgcc-file-name | sed 's/libgcc/&_eh/'"
 )
 
-Build_checks=(
+build_checks=(
     "test -f $ramfs_mount_point/tools/lib/gcc/x86_64-lfs-linux-gnu/4.6.2/libgcc.a"
 )
 

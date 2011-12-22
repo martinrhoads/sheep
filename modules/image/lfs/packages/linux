@@ -1,0 +1,31 @@
+
+# -*- mode: shell-script;  -*-
+
+set -e
+
+ORIGIN=http://www.kernel.org/pub/linux/kernel/v3.0/linux-3.1.6.tar.bz2
+MD5=7b211c1896809658584457ece4542f7e
+
+build_steps=(
+  "rm -rf ramfs/source/linux-3.1.6 && mkdir -p ramfs/source/linux-3.1.6"
+  "cd ramfs/source"
+  "tar -xjf $(get_md5_path $MD5) "
+  "cd linux-3.1.6"
+  "make headers_check"
+  "make INSTALL_HDR_PATH=dest headers_install"
+  "cp -rv dest/include/* /tools/include"
+)
+
+build_checks=(
+  "test -f $ramfs_mount_point/tools/include/linux/loop.h"
+)
+
+spot_checks=(
+    "true"
+)
+
+debug "calling get for linux source"
+get --origin $ORIGIN --md5 $MD5
+
+debug "calling build for vde2 source"
+build --build-steps build_steps[@]       --build-checks build_checks[@]       --spot-checks spot_checks[@] 
