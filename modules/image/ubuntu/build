@@ -2,7 +2,8 @@
 # ubuntu-virt-server ubuntu-vm-builder kvm-pxe bridge-utils syslinux squashfs-tools genisoimage libvde0 vde2 kvm
 
 required_inputs=(
-  'TYPE="type of image to build (options are base, psm)"'
+  TYPE="type of image to build (options are base, psm)"
+  DEST="build image in this destination directory"
 ) 
 
 # parse command line inputs and ensure all required inputs are set
@@ -21,10 +22,10 @@ vmname=ubuntu-${TYPE}-${hypervisor}-${release}-${version}
 
 if [ "$TYPE" = "psm" ]; then
 declare -a build_steps=( "time sudo ubuntu-vm-builder $hypervisor $release \
-  --execscript ${SHEEP_PARENT_MODULE_DIR}/setup-server \
+  --execscript ${DEST}/setup-server \
   --tmpfs 2048 \
   --domain ermal14.com \
-  --dest $SHEEP_PARENT_MODULE_DIR/${vmname} \
+  --dest $DEST/${vmname} \
   --arch amd64 \
   --hostname psm \
   --mem 1024 \
@@ -49,7 +50,7 @@ declare -a build_steps=( "time sudo ubuntu-vm-builder $hypervisor $release \
   --addpkg avahi-daemon \
   --addpkg vlan \
   --debug"
-  "cd $SHEEP_PARENT_MODULE_DIR"
+  "cd $DEST"
   "mv $vmname/*.qcow2 $vmname.qcow2 "
   "rm -rf $vmname"
 )
@@ -58,7 +59,7 @@ declare -a build_steps=( "time sudo ubuntu-vm-builder $hypervisor $release \
   --execscript $(pwd)/setup-base \
   --tmpfs 2048 \
   --domain ermal14.com \
-  --dest $SHEEP_PARENT_MODULE_DIR/${vmname} \
+  --dest $DEST/${vmname} \
   --arch amd64 \
   --hostname basebox \
   --mem 1024 \
@@ -77,7 +78,7 @@ declare -a build_steps=( "time sudo ubuntu-vm-builder $hypervisor $release \
   --addpkg avahi-daemon \
   --addpkg vlan \
   --debug"
-  "cd $SHEEP_PARENT_MODULE_DIR"
+  "cd $DEST"
   "mv $vmname/*.qcow2 $vmname.qcow2 "
   "rm -rf $vmname"
 )
@@ -87,7 +88,7 @@ else
 fi
 
 declare -a build_checks=(
-  "test -f $vmname.qcow2"
+  "test -f $DEST/$vmname.qcow2"
 )
 
 
