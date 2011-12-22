@@ -5,12 +5,11 @@ required_inputs=(
   'TYPE="type of image to build (options are base, psm)"'
 ) 
 
-# parse command line inputs 
-parse_inputs $@
-
-# make sure that all required params were set
-if ! test "$(${required_inputs[*]} | tr -d ' ')" == '' ; then 
-  echo all required inputs were not found. returning 1
+# parse command line inputs and ensure all required inputs are set
+smart_parse $@
+if ! verify_inputs required_inputs[@]; then 
+  echo 
+  ./help
   return 1
 fi
 
