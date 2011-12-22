@@ -40,7 +40,7 @@ declare -a build_steps=( "time sudo ubuntu-vm-builder $hypervisor $release \
   --dns 8.8.8.8 \
   --bcast 192.168.20.255 \
   --bridge br0 \
-  --install-mirror http://64.13.163.15:3142/ubuntu \
+  --install-mirror http://mirror.anl.gov/ubuntu \
   --mirror http://mirror.anl.gov/ubuntu \
   --components main,universe,multiverse,restricted \
   --addpkg acpid \
@@ -68,7 +68,7 @@ declare -a build_steps=( "time sudo ubuntu-vm-builder $hypervisor $release \
   --user test \
   --pass test \
   --dns 8.8.8.8 \
-  --install-mirror http://64.13.163.15:3142/ubuntu \
+  --install-mirror http://mirror.anl.gov/ubuntu \
   --mirror http://mirror.anl.gov/ubuntu \
   --components main,universe,multiverse,restricted \
   --addpkg acpid \
