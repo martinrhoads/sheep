@@ -1,0 +1,32 @@
+
+# -*- mode: shell-script;  -*-
+
+set -e
+
+ORIGIN=http://ftp.gnu.org/gnu/binutils/binutils-2.22.tar.bz2
+MD5=ee0f10756c84979622b992a4a61ea3f5
+
+build_steps=(
+  "rm -rf ramfs/source/binutils-2.22 && mkdir -p ramfs/source/binutils-2.22"
+  "cd ramfs/source"
+  "tar -xjf /var/martin/sheep/cache/md5/ee/0f10756c84979622b992a4a61ea3f5 "
+  "cd binutils-2.22"
+  "./configure --target=$LFS_TGT --prefix=/tools \
+      --disable-nls --disable-werror"
+  "make"
+  "make install "
+)
+
+build_checks=(
+  "test -f ramfs/tools/lib/libiberty.a"
+)
+
+spot_checks=(
+    "true"
+)
+
+debug "calling get for binutils source"
+get --origin $ORIGIN --md5 $MD5
+
+debug "calling build for vde2 source"
+build --build-steps build_steps[@]       --build-checks build_checks[@]       --spot-checks spot_checks[@] 

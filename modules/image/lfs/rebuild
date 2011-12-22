@@ -1,0 +1,5 @@
+set -e
+# -*- mode: shell-script;  -*-  
+
+./ramfs_umount
+./build

@@ -1,0 +1,21 @@
+set -e
+# -*- mode: shell-script;  -*-    
+
+export MAKEFLAGS='-j 8'
+export LFS=$(pwd)/ramfs
+export LFS_TGT=$(uname -m)-lfs-linux-gnu
+
+./ramfs_mount
+mkdir -p ramfs/tools/lib
+
+# make sure we have a symlink in /tools pointing into local tools directory 
+if ! test -L /tools; then 
+  sudo ln -sv $(pwd)/ramfs/tools /tools
+fi
+
+# if we are on 64-bit, make sure that lib64 is linked to lib
+if ! test -e /tools/lib64 && test "$(uname -m)" == x86_64; then
+  ln -sv lib /tools/lib64
+fi
+
+require image lfs build_package binutils gcc 

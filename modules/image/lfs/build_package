@@ -1,0 +1,31 @@
+
+# -*- mode: shell-script;  -*-    
+
+if test -z $1; then 
+  echo you need to specify a package to build 
+  exit 1
+fi 
+
+
+if ! test -x packages/$1; then 
+  echo it does not look like packages/$1 is an executable 
+  exit 2
+fi
+
+# save current dir
+current_dir=$(pwd)
+
+# invoke package build
+./packages/$1
+
+# make sure that we go back to the directory that we started in
+if test $(pwd) == $current_dir; then 
+  cd $current_dir
+fi
+
+# if there are more arguments, then recurse
+shift 
+if ! test -z $1; then 
+  . $0 $@
+fi 
+

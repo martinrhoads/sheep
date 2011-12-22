@@ -1,0 +1,64 @@
+
+# -*- mode: shell-script;  -*-
+
+set -e
+
+GCC_ORIGIN=http://ftp.gnu.org/gnu/gcc/gcc-4.6.2/gcc-4.6.2.tar.bz2
+GCC_MD5=028115c4fbfb6cfd75d6369f4a90d87e
+
+GCC_PATCH_ORIGIN=http://www.linuxfromscratch.org/patches/lfs/development/gcc-4.6.2-cross_compile-1.patch
+GCC_PATCH_MD5=1b7886a7a4df3a48617e88a481862264
+
+MPFR_ORIGIN=http://www.mpfr.org/mpfr-3.1.0/mpfr-3.1.0.tar.bz2
+MPFR_MD5=238ae4a15cc3a5049b723daef5d17938
+
+GMP_ORIGIN=http://ftp.gnu.org/gnu/gmp/gmp-5.0.2.tar.bz2
+GMP_MD5=0bbaedc82fb30315b06b1588b9077cd3
+
+MPC_ORIGIN=http://www.multiprecision.org/mpc/download/mpc-0.9.tar.gz
+MPC_MD5=0d6acab8d214bd7d1fbbc593e83dd00d
+
+
+build_steps=(
+  "rm -rf ramfs/source/gcc-4.6.2 && mkdir -p ramfs/source/gcc-4.6.2"
+  "rm -rf ramfs/source/mpfr-3.1.0 && mkdir -p ramfs/source/mpfr-3.1.0"
+  "rm -rf ramfs/source/gmp-5.0.2 && mkdir -p ramfs/source/gmp-5.0.2"
+  "rm -rf ramfs/source/mpc-0.9 && mkdir -p ramfs/source/mpc-0.9"
+  "cd ramfs/source"
+  "tar -xjf $(get_md5_path $GCC_MD5)"
+  "tar -xjf $(get_md5_path $MPFR_MD5)"
+  "tar -xjf $(get_md5_path $GMP_MD5)"
+  "tar -xzf $(get_md5_path $MPC_MD5)"
+  "cd gcc-4.6.2"
+  "patch -Np1 -i $(get_md5_path $GCC_PATCH_MD5)"
+  "./configure \
+    --target=$LFS_TGT --prefix=/tools \
+    --disable-nls --disable-shared --disable-multilib \
+    --disable-decimal-float --disable-threads \
+    --disable-libmudflap --disable-libssp \
+    --disable-libgomp --disable-libquadmath \
+    --disable-target-libiberty --disable-target-zlib \
+    --enable-languages=c --without-ppl --without-cloog \
+    --with-mpfr-include=$(pwd)/../gcc-4.6.2/mpfr/src \
+    --with-mpfr-lib=$(pwd)/mpfr/src/.libs"
+  "make"
+  "make install "
+)
+
+build_checks=(
+    false
+)
+
+spot_checks=(
+    "true"
+)
+
+debug "calling get for gcc sources"
+get --origin $GCC_ORIGIN --md5 $GCC_MD5
+get --origin $GCC_PATCH_ORIGIN --md5 $GCC_PATCH_MD5
+get --origin $MPFR_ORIGIN --md5 $MPFR_MD5
+get --origin $GMP_ORIGIN --md5 $GMP_MD5
+get --origin $MPC_ORIGIN --md5 $MPC_MD5
+
+debug "calling build for vde2 source"
+build --build-steps build_steps[@]       --build-checks build_checks[@]       --spot-checks spot_checks[@] 

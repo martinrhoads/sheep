@@ -13,9 +13,10 @@ else
   cd -P $(dirname $0)
 fi 
  
-SHEEP_DIR=$(pwd)
+export SHEEP_DIR=$(pwd)
 source library/core
 wipe_envirionment
+export BASH_ENV=$SHEEP_DIR/library/core
 hash -r # clear out path hash
 hash -p $SHEEP_DIR/sheep sheep # allow sheep bin to be invoked without touching path
 debug "getting started"
