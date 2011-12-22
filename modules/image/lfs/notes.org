@@ -1,0 +1,3 @@
+* these packages need to be installed on ubuntu 
+
+ linux-libc-dev 

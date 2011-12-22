@@ -29,6 +29,9 @@ build_steps=(
   "tar -xjf $(get_md5_path $MPFR_MD5)"
   "tar -xjf $(get_md5_path $GMP_MD5)"
   "tar -xzf $(get_md5_path $MPC_MD5)"
+  "rsync -a mpfr-3.1.0/  gcc-4.6.2/"
+  "rsync -a gmp-5.0.2/  gcc-4.6.2/"
+  "rsync -a mpc-0.9/  gcc-4.6.2/"
   "cd gcc-4.6.2"
   "patch -Np1 -i $(get_md5_path $GCC_PATCH_MD5)"
   "./configure \
