@@ -18,6 +18,9 @@ release=natty
 version=2
 hypervisor=kvm
 
+echo "SHEEPMOD = ${SHEEP_PARENT_MODULE_DIR}"
+exit 1
+
 vmname=ubuntu-${TYPE}-${hypervisor}-${release}-${version}
 
 if [ "$TYPE" = "psm" ]; then
