@@ -1,0 +1,31 @@
+
+# -*- mode: shell-script;  -*-
+
+set -e
+
+ORIGIN=http://ftp.gnu.org/gnu/gmp/gmp-5.0.2.tar.bz2
+MD5=0bbaedc82fb30315b06b1588b9077cd3
+
+build_steps=(
+  "rm -rf ramfs/source/gmp-5.0.2 && mkdir -p ramfs/source/gmp-5.0.2"
+  "cd ramfs/source"
+  "tar -xjf $(get_md5_path $MD5) "
+  "cd gmp-5.0.2"
+  "./configure --prefix=/tools "
+  "make"
+  "make install "
+)
+
+build_checks=(
+    false
+)
+
+spot_checks=(
+    "true"
+)
+
+debug "calling get for gmp source"
+get --origin $ORIGIN --md5 $MD5
+
+debug "calling build for vde2 source"
+build --build-steps build_steps[@]       --build-checks build_checks[@]       --spot-checks spot_checks[@] 

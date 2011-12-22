@@ -1,0 +1,31 @@
+
+# -*- mode: shell-script;  -*-
+
+set -e
+
+ORIGIN=http://www.mpfr.org/mpfr-3.1.0/mpfr-3.1.0.tar.bz2
+MD5=238ae4a15cc3a5049b723daef5d17938
+
+build_steps=(
+  "rm -rf ramfs/source/mpfr-3.1.0 && mkdir -p ramfs/source/mpfr-3.1.0"
+  "cd ramfs/source"
+  "tar -xjf $(get_md5_path $MD5) "
+  "cd mpfr-3.1.0"
+  "./configure --prefix=/tools "
+  "make"
+  "make install "
+)
+
+build_checks=(
+    false
+)
+
+spot_checks=(
+    "true"
+)
+
+debug "calling get for mpfr source"
+get --origin $ORIGIN --md5 $MD5
+
+debug "calling build for vde2 source"
+build --build-steps build_steps[@]       --build-checks build_checks[@]       --spot-checks spot_checks[@] 

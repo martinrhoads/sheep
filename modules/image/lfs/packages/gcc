@@ -21,6 +21,7 @@ MPC_MD5=0d6acab8d214bd7d1fbbc593e83dd00d
 
 build_steps=(
   "rm -rf ramfs/source/gcc-4.6.2 && mkdir -p ramfs/source/gcc-4.6.2"
+  "rm -rf ramfs/source/gcc_build && mkdir -p ramfs/source/gcc_build"
   "rm -rf ramfs/source/mpfr-3.1.0 && mkdir -p ramfs/source/mpfr-3.1.0"
   "rm -rf ramfs/source/gmp-5.0.2 && mkdir -p ramfs/source/gmp-5.0.2"
   "rm -rf ramfs/source/mpc-0.9 && mkdir -p ramfs/source/mpc-0.9"
@@ -29,12 +30,15 @@ build_steps=(
   "tar -xjf $(get_md5_path $MPFR_MD5)"
   "tar -xjf $(get_md5_path $GMP_MD5)"
   "tar -xzf $(get_md5_path $MPC_MD5)"
-  "rsync -a mpfr-3.1.0/  gcc-4.6.2/"
-  "rsync -a gmp-5.0.2/  gcc-4.6.2/"
-  "rsync -a mpc-0.9/  gcc-4.6.2/"
   "cd gcc-4.6.2"
+  "mv ../mpfr-3.1.0 mpc"
+  "mv ../gmp-5.0.2 mpc"
+  "mv ../mpc-0.9 mpc"
   "patch -Np1 -i $(get_md5_path $GCC_PATCH_MD5)"
-  "./configure \
+  "cd ../gcc_build"
+  "CPLUS_INCLUDE_PATH=/tools/x86_64-unknown-linux-gnu \
+    C_INCLUDE_PATH=/tools/x86_64-unknown-linux-gnu \
+    ../gcc-4.6.2/configure \
     --target=$LFS_TGT --prefix=/tools \
     --disable-nls --disable-shared --disable-multilib \
     --disable-decimal-float --disable-threads \
@@ -43,13 +47,15 @@ build_steps=(
     --disable-target-libiberty --disable-target-zlib \
     --enable-languages=c --without-ppl --without-cloog \
     --with-mpfr-include=$(pwd)/../gcc-4.6.2/mpfr/src \
-    --with-mpfr-lib=$(pwd)/mpfr/src/.libs"
-  "make"
+    --with-mpfr-lib=$(pwd)/../gcc-4.6.2/mpfr/src/.libs"
+  "CPLUS_INCLUDE_PATH=/tools/x86_64-unknown-linux-gnu \
+    C_INCLUDE_PATH=/tools/x86_64-unknown-linux-gnu \
+    make"
   "make install "
 )
 
 build_checks=(
-    false
+  false
 )
 
 spot_checks=(

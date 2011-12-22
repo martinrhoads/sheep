@@ -1,0 +1,31 @@
+
+# -*- mode: shell-script;  -*-
+
+set -e
+
+ORIGIN=http://www.multiprecision.org/mpc/download/mpc-0.9.tar.gz
+MD5=0d6acab8d214bd7d1fbbc593e83dd00d
+
+build_steps=(
+  "rm -rf ramfs/source/mpc-0.9 && mkdir -p ramfs/source/mpc-0.9"
+  "cd ramfs/source"
+  "tar -xzf $(get_md5_path $MD5) "
+  "cd mpc-0.9"
+  "./configure --prefix=/tools "
+  "make"
+  "make install "
+)
+
+build_checks=(
+    false
+)
+
+spot_checks=(
+    "true"
+)
+
+debug "calling get for mpc source"
+get --origin $ORIGIN --md5 $MD5
+
+debug "calling build for vde2 source"
+build --build-steps build_steps[@]       --build-checks build_checks[@]       --spot-checks spot_checks[@] 
