@@ -7,9 +7,9 @@ imagedir=$1
 export 
 
 perl -pi -e "s%^127.0.1.1.*\n%%" $imagedir/etc/hosts
-echo 'cloudboot' > $imagedir/etc/hostname
-echo '127.0.0.1 basebox basebox.local' >> /etc/hosts
-chroot $imagedir hostname cloudboot
+echo 'basebox' > $imagedir/etc/hostname
+echo '127.0.0.1 basebox basebox.local' >> $imagedir/etc/hosts
+#chroot $imagedir hostname basebox
 
 cd `dirname $0`
 cp install_chef.sh ${imagedir}/root/install_chef.sh
@@ -24,9 +24,7 @@ chroot $imagedir /root/install_chef.sh
 
 # Script to grab the macaddress from ifconfig,
 # download the kickseed and strip everything but the post install hook,
-# run the post install on first boot,
-# reboot,
-# /etc/firstboot is executed on second boot (setup by kickseed).
+# run the kickseed script; then run /etc/firstboot
 cat << EOF > $imagedir/root/seed.sh
 #!/bin/bash
 sed -i.orig -e 's/\/root\/seed.sh//' /etc/rc.local
@@ -35,9 +33,10 @@ curl http://192.168.20.11/machines/\${macaddress}/kickseed -o /root/kickseed
 sed -i.orig -n '1h; 1!H; \${ g; s/^.*%post --interpreter=/#/ p }' /root/kickseed
 chmod +x /root/kickseed
 /root/kickseed 2>&1 > /root/kickseed.log
+echo "exit 0" > /etc/rc.local
 chmod +x /etc/firstboot
 /etc/init.d/networking restart
-#/root/firstboot 
+/etc/firstboot 2>&1 > /root/firstboot.log
 EOF
 chmod +x $imagedir/root/seed.sh
 

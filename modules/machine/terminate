@@ -1,7 +1,7 @@
+set -x
 required_inputs=(
   HOSTNAME='hostname of machine'
 )
-
 
 # parse command line inputs and ensure all required inputs are set
 smart_parse $@
@@ -11,5 +11,6 @@ if ! verify_inputs required_inputs[@]; then
   return 1
 fi
 
+eval $(get_hash /machines/${VM_NAME})
 
 kill $(cat $pidfile)

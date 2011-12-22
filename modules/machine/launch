@@ -32,5 +32,6 @@ if ! kill -0 $(cat $pidfile); then
   $SHEEP_DIR/modules/qemu-kvm/root/bin/qemu-kvm -vnc $vnc_display -m $memory \
     -hda $machine_disk \
     $net_command \
+    -smp 2cores \
     -pidfile $pidfile -daemonize 
 fi

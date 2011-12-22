@@ -1,18 +1,16 @@
 #!/bin/bash -ex 
 
-exit 0 
-
 imagedir=$1
 
 # change home to be inside chroot
 export 
 
 perl -pi -e "s%^127.0.1.1.*\n%%" $imagedir/etc/hosts
-echo 'cloudboot' > $imagedir/etc/hostname
-echo '127.0.0.1 cloudboot cloudboot.local' >> /etc/hosts
-chroot $imagedir hostname cloudboot
+echo 'psm' > $imagedir/etc/hostname
+echo '127.0.0.1 psm.local psm' >> $imagedir/etc/hosts
+chroot $imagedir hostname psm
 
-cs_chef_dir=/home/martin/Dropbox/cloudscaling/cs-chef/
+cs_chef_dir=/home/jeremy/cs-chef
 mkdir ${imagedir}/root/cs-chef
 rsync -a ${cs_chef_dir}/ ${imagedir}/root/cs-chef/
 cd `dirname $0`

@@ -1,5 +1,5 @@
-echo "deb http://apt.cloudscaling.com:3142/cloudscaling natty main" > /etc/apt/sources.list.d/cloudscaling.list
-echo "deb http://apt.cloudscaling.com:3142/opscode natty-0.10 main" > /etc/apt/sources.list.d/opscode.list
+echo "deb http://apt.cloudscaling.com natty main" > /etc/apt/sources.list.d/cloudscaling.list
+echo "deb http://apt.opscode.com natty-0.10 main" > /etc/apt/sources.list.d/opscode.list
 wget http://apt.cloudscaling.com/apt@cloudscaling.com.gpg.key -O - | apt-key add -
 wget http://apt.opscode.com/packages@opscode.com.gpg.key -O - | apt-key add -
 export DEBIAN_FRONTEND=noninteractive

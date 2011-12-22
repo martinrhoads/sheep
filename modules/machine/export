@@ -1,0 +1,124 @@
+required_inputs=(
+  VM_NAME="hostname of machine"
+  OUT="filename to dump the .json data of this machine"
+)
+
+# parse command line inputs and ensure all required inputs are set
+smart_parse $@
+if ! verify_inputs required_inputs[@]; then 
+  echo 
+  ./help
+  return 1
+fi
+
+eval $(get_hash /machines/${VM_NAME})
+
+cat <<EOF > $OUT
+{
+  "id": "305329c3-e558-4ac8-ad35-042fc9663c58",
+  "roles": [
+    "nova-controller", "nova-compute"
+  ],
+  "interfaces": [
+    {
+      "name": "eth0",
+      "mac": "${macaddress_eth[0]}",
+      "type": "physical",
+      "plumbing": "static",
+      "bridge_ports": null,
+      "netmask": "255.255.255.0",
+      "gateway": "192.168.20.1",
+      "broadcast": null,
+      "addresses": [
+        "192.168.20.55"
+      ],
+      "vlan_raw_device": null
+    },
+    {
+      "name": "eth1",
+      "mac": "${macaddress_eth[1]}",
+      "type": "physical",
+      "plumbing": "static",
+      "bridge_ports": null,
+      "netmask": null,
+      "gateway": null,
+      "broadcast": null,
+      "addresses": [
+      ],
+      "vlan_raw_device": null
+    },
+    {
+      "name": "eth2",
+      "mac": "${macaddress_eth[2]}",
+      "type": "physical",
+      "plumbing": "manual"
+    },
+    {
+      "name": "eth3",
+      "mac": "${macaddress_eth[3]}",
+      "type": "physical",
+      "plumbing": "static",
+      "bridge_ports": null,
+      "netmask": "255.255.255.0",
+      "gateway": null,
+      "broadcast": null,
+      "addresses": [
+        "172.31.20.55"
+      ],
+      "vlan_raw_device": null
+    },
+{
+      "name": "vlan103",
+      "mac": "52:54:00:00:00:06",
+      "type": "physical",
+      "plumbing": "static",
+      "bridge_ports": null,
+      "netmask": "255.255.255.0",
+      "gateway": null,
+      "broadcast": null,
+      "addresses": [
+        "172.31.21.55"
+      ],
+      "vlan_raw_device": "eth2"
+    }
+  ],
+  "name_records": [
+
+  ],
+  "deployments": [
+    "eb6befb8-eab1-461d-b9ff-fc5141390333"
+  ],
+  "traits": {
+    "develop": {
+      "cs_chef_dir": "/mnt/shared/cs-chef",
+      "nfs": {
+        "server": "192.168.20.1",
+        "mounts": {
+          "shared": "/export/shared"
+        }
+      }
+    }
+  },
+  "hostname": "base1",
+  "domain": "cloudscaling.com",
+  "management_interface": "eth0",
+  "ipmi_address": "172.16.5.21",
+  "os": "ubuntu",
+  "os_version": "11.04",
+  "type": "ipmi",
+  "dns_nameservers": [
+
+  ],
+  "dns_search": "",
+  "state": "os_install_complete",
+  "state_info": {
+  },
+  "gateway_ip": "192.168.20.1",
+  "gateway_iface": "eth0"
+}
+EOF
+
+set +e
+curl -XDELETE 192.168.20.11/machines/52:71:0b:b3:ba:ba
+set -e
+curl -XPOST -d @${OUT} 192.168.20.11/machines
