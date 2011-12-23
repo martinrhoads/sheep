@@ -1,15 +1,11 @@
 
 # -*- mode: shell-script;  -*-
-
 set -e
 
 # need to make sure glib2.0-dev is installed 
 
 # we depend on vde2 already being build
 require vde2 build 
-
-# we depend on an image already being build
-require image build
 
 repo --name qemu-kvm --origin git://git.kernel.org/pub/scm/virt/kvm/qemu-kvm.git --sha1 master --destination qemu-kvm
 
@@ -25,8 +21,7 @@ build_steps=(
  )
 
 build_checks=(
-  false 
-  false
+  "test -f $SHEEP_PARENT_MODULE_DIR/root/bin/qemu-kvm"
 )
 
 spot_checks=(

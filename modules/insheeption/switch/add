@@ -1,3 +1,6 @@
+export SHEEP_PARENT_MODULE_DIR=$(dirname $SHEEP_PARENT_MODULE_DIR)
+require insheeption build
+
 required_inputs=(
   SWITCH_NAME="unique name for this switch"
   SOCKET_DIR="socket"

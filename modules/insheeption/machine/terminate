@@ -1,4 +1,6 @@
-set -x
+export SHEEP_PARENT_MODULE_DIR=$(dirname $SHEEP_PARENT_MODULE_DIR)
+
+require insheeption build
 required_inputs=(
   VM_NAME='hostname of machine'
 )
@@ -13,4 +15,5 @@ fi
 
 eval $(get_hash /machines/${VM_NAME})
 
-kill $(cat $pidfile)
+kill $(cat $pidfile) > /dev/null
+echo "${VM_NAME} terminated."

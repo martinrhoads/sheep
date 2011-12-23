@@ -1,3 +1,7 @@
+export SHEEP_PARENT_MODULE_DIR=$(dirname $SHEEP_PARENT_MODULE_DIR)
+
+require insheeption build
+
 required_inputs=(
   VM_NAME="hostname of machine"
 )

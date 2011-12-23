@@ -1,0 +1,3 @@
+require qemu-kvm build
+#require image ubuntu build --type psm
+#require image ubuntu build --type base

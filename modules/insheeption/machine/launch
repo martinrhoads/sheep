@@ -1,3 +1,7 @@
+export SHEEP_PARENT_MODULE_DIR=$(dirname $SHEEP_PARENT_MODULE_DIR)
+
+require insheeption build
+
 required_inputs=(
   VM_NAME="hostname of machine"
 )
@@ -16,7 +20,7 @@ eval $(get_hash /machines/${VM_NAME})
 eval $(get_hash /switches/${switch_name})
 
 # unless it's already running
-if ! kill -0 $(cat $pidfile); then
+if ! kill -0 $(cat $pidfile) > /dev/null; then
 
   # clone the qcow image
   $SHEEP_DIR/modules/qemu-kvm/root/bin/qemu-img create -f qcow2 -b $image $machine_disk
@@ -34,4 +38,7 @@ if ! kill -0 $(cat $pidfile); then
     $net_command \
     -smp 2cores \
     -pidfile $pidfile -daemonize 
+  echo $VM_NAME launched.
+else
+  echo $VM_NAME is already running. Taking no action.
 fi

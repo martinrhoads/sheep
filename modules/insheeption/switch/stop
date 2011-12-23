@@ -1,3 +1,5 @@
+export SHEEP_PARENT_MODULE_DIR=$(dirname $SHEEP_PARENT_MODULE_DIR)
+require insheeption build
 
 # -*- mode: shell-script;  -*-
 

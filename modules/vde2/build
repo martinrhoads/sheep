@@ -17,7 +17,7 @@ build_steps=(
 )
 
 build_checks=(
-    "test -f root/bin/vdecmd"
+    "test -f $SHEEP_PARENT_MODULE_DIR/root/bin/vdecmd"
 )
 
 spot_checks=(
