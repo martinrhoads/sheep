@@ -22,6 +22,20 @@ chroot $imagedir apt-get update
 chroot $imagedir apt-get install -y libffi5
 chroot $imagedir /root/install_chef.sh 
 
+# Ubuntu base doesn't have sudoers.d support by default.
+mkdir -p /etc/sudoers.d
+cat <<EOF > $imagedir/etc/sudoers
+# User privilege specification
+root	ALL=(ALL:ALL) ALL
+
+# Members of the admin group may gain root privileges
+%admin ALL=(ALL) ALL
+
+## Read drop-in files from /etc/sudoers.d
+## (the '#' here does not indicate a comment)
+#includedir /etc/sudoers.d
+EOF
+
 # Script to grab the macaddress from ifconfig,
 # download the kickseed and strip everything but the post install hook,
 # run the kickseed script; then run /etc/firstboot
