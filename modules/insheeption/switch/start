@@ -1,4 +1,4 @@
-
+export SHEEP_PARENT_MODULE_DIR=$(dirname $SHEEP_PARENT_MODULE_DIR)
 # -*- mode: shell-script;  -*-
 
 set -e
@@ -18,7 +18,7 @@ fi
 
 eval $(get_hash /switches/$SWITCH_NAME)
 
-execdir=$SHEEP_DIR/modules/vde2/root/bin
+execdir=$SHEEP_PARENT_MODULE_DIR/root/bin
 
 if ! [ -S ${socket_dir}/ctl ]; then
   echo "starting switch "
