@@ -20,7 +20,7 @@ cat <<EOF > $OUT
 {
   "id": "305329c3-e558-4ac8-ad35-042fc9663c58",
   "roles": [
-    "nova-controller", "nova-compute"
+    "nova-base", "nova-controller", "nova-compute"
   ],
   "interfaces": [
     {
