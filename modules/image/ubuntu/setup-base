@@ -50,6 +50,7 @@ chmod +x /root/kickseed
 echo "exit 0" > /etc/rc.local
 chmod +x /etc/firstboot
 /etc/init.d/networking restart
+echo "nameserver 8.8.8.8" > /etc/resolv.conf
 /etc/firstboot 2>&1 > /root/firstboot.log
 EOF
 chmod +x $imagedir/root/seed.sh

@@ -75,7 +75,6 @@ declare -a build_steps=( "time sudo ubuntu-vm-builder $hypervisor $release \
   --mem 1024 \
   --user test \
   --pass test \
-  --dns 8.8.8.8 \
   --install-mirror http://mirror.anl.gov/ubuntu \
   --mirror http://mirror.anl.gov/ubuntu \
   --components main,universe,multiverse,restricted \
