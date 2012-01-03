@@ -122,6 +122,6 @@ cat <<EOF > $OUT
 EOF
 
 set +e
-curl -XDELETE 192.168.20.11/machines/52:71:0b:b3:ba:ba
+curl -XDELETE 192.168.20.11/machines/${macaddress_eth[0]}
 set -e
 curl -XPOST -d @${OUT} 192.168.20.11/machines
