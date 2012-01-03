@@ -57,6 +57,7 @@ declare -a build_steps=( "time sudo ubuntu-vm-builder $hypervisor $release \
   --addpkg emacs23-nox \
   --addpkg openssh-server \
   --addpkg avahi-daemon \
+  --addpkg bash-completion \
   --addpkg vlan \
   --debug"
   "cd $DEST"
@@ -85,6 +86,7 @@ declare -a build_steps=( "time sudo ubuntu-vm-builder $hypervisor $release \
   --addpkg emacs23-nox \
   --addpkg openssh-server \
   --addpkg avahi-daemon \
+  --addpkg bash-completion \
   --addpkg vlan \
   --debug"
   "cd $DEST"
