@@ -65,41 +65,29 @@ declare -a build_steps=( "time sudo ubuntu-vm-builder $hypervisor $release \
   "rm -rf $vmname"
 )
 elif [ "$TYPE" = "base" ]; then
-declare -a build_steps=( "time sudo ubuntu-vm-builder $hypervisor $release \
-  --execscript $(pwd)/setup-base \
-  --tmpfs 2048 \
-  --part /tmp/vmbuilder.part
-  --domain ermal14.com \
-  --dest $DEST/${vmname} \
-  --arch amd64 \
-  --hostname basebox \
-  --mem 1024 \
-  --user test \
-  --pass test \
-  --install-mirror http://mirror.anl.gov/ubuntu \
-  --mirror http://mirror.anl.gov/ubuntu \
-  --components main,universe,multiverse,restricted \
-  --addpkg acpid \
-  --addpkg vim \
-  --addpkg curl \
-  --addpkg wget \
-  --addpkg emacs23-nox \
-  --addpkg openssh-server \
-  --addpkg avahi-daemon \
-  --addpkg bash-completion \
-  --addpkg vlan \
-  --debug"
-  "cd $DEST"
-  "mv $vmname/*.qcow2 $vmname.qcow2 "
-  "rm -rf $vmname"
-)
+  if [[ "$OUTFILE" == "" ]]; then
+    echo "ARGUMENT ERROR: please set --outfile for .tgz destination"
+    exit 1
+  fi
+  declare -a build_steps=( 
+    "sudo rm -rf $DEST"
+    "sudo rm -rf $OUTFILE"
+    "sudo mkdir -p $DEST"
+    "sudo mount -t tmpfs -o size=4g tmpfs $DEST"
+    "sudo time debootstrap --verbose --include=grub,acpid,vim,curl,wget,emacs23-nox,openssh-server,avahi-daemon,bash-completion,vlan natty $DEST http://mirror.anl.gov/ubuntu"
+    "sudo $(pwd)/setup-base $DEST"
+    "cd $DEST"
+    "sudo time tar -czf $OUTFILE *"
+    "cd .."
+    "sudo umount $DEST"
+  )
 else
   echo "VM type not recognized.  Known types are psm, base"
   exit 1
 fi
 
 declare -a build_checks=(
-  "test -f $DEST/$vmname.qcow2"
+  "test -f $DEST/etc/lsb_release"
 )
 
 

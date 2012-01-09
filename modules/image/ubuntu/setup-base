@@ -9,17 +9,17 @@ export
 perl -pi -e "s%^127.0.1.1.*\n%%" $imagedir/etc/hosts
 echo 'basebox' > $imagedir/etc/hostname
 echo '127.0.0.1 basebox basebox.local' >> $imagedir/etc/hosts
+echo "deb http://mirror.anl.gov/ubuntu natty main restricted universe multiverse" > $imagedir/etc/apt/sources.list
 #chroot $imagedir hostname basebox
 
 cd `dirname $0`
 cp install_chef.sh ${imagedir}/root/install_chef.sh
 chmod +x ${imagedir}/root/install_chef.sh
-sudo mount -t proc none ${imagedir}/proc
 chroot $imagedir mv /sbin/initctl /sbin/initctl.bak
 chroot $imagedir dpkg-divert --local --rename --add /sbin/initctl
 chroot $imagedir ln -s /bin/true /sbin/initctl
 chroot $imagedir apt-get update 
-chroot $imagedir apt-get install -y libffi5
+chroot $imagedir apt-get install -y libffi5 
 chroot $imagedir /root/install_chef.sh 
 
 # Ubuntu base doesn't have sudoers.d support by default.
@@ -62,4 +62,3 @@ sed -i -e 's/exit 0//' $imagedir/etc/rc.local
 
 chroot $imagedir mv /sbin/initctl.bak /sbin/initctl
 sync 
-sudo umount ${imagedir}/proc  
