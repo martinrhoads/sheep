@@ -86,4 +86,8 @@ echo -e "  $failed_tests \tfailed (two are supposed to fail)"
 echo -e "${txtgrn}  $(( ${#tests_to_run[@]} - failed_tests )) \tpassed"
 echo 
 
-exit $failed_tests
+if test $failed_tests -eq 2; then 
+  exit 0
+else
+  exit $failed_tests
+fi
