@@ -30,4 +30,5 @@ chroot $imagedir /root/install_chef.sh
 chroot $imagedir /root/cs-chef/bin/install_cloudboot
 chroot $imagedir mv /sbin/initctl.bak /sbin/initctl
 sync 
+sleep 2
 sudo umount ${imagedir}/proc  
