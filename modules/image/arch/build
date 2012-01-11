@@ -1,0 +1,41 @@
+required_inputs=(
+  CHROOT="location to build (the chroot dir)"
+  OUTFILE="Output file for image.tar.gz"
+) 
+
+# parse command line inputs and ensure all required inputs are set
+smart_parse $@
+if ! verify_inputs required_inputs[@]; then 
+  echo 
+  ./help
+  return 1
+fi
+
+declare -a build_steps=( 
+  "sudo mkdir -p $CHROOT"
+  "sudo mkdir -p $CHROOT/proc"
+  "sudo mkdir -p $CHROOT/dev"
+  "sudo mkdir -p $CHROOT/sys"
+  "sudo mount -o bind /proc $CHROOT/proc"
+  "sudo mount -o bind /dev $CHROOT/dev"
+  "sudo mount -o bind /sys $CHROOT/sys"
+  "sudo mkdir -p $CHROOT/var/lib/pacman/"
+  "time sudo pacman -Syu --noconfirm base -r $CHROOT"
+  "sudo cp $(pwd)/postinstall.sh $CHROOT"
+  "sudo chroot $CHROOT /postinstall.sh"
+  "sudo umount $CHROOT/proc"
+  "sudo umount $CHROOT/dev"
+  "sudo umount $CHROOT/sys"
+  "cd $CHROOT"
+  "sudo tar -czvf $OUTFILE *"
+)
+
+declare -a build_checks=(
+  "false"
+)
+
+
+declare -a spot_checks=(true)
+build --build-steps build_steps[@] \
+      --build-checks build_checks[@] \
+      --spot-checks spot_checks[@] 
