@@ -1,10 +1,17 @@
+
+# -*- mode: shell-script -*-
+
 # you need to make sure the following packages are installed 
-# ubuntu-virt-server ubuntu-vm-builder kvm-pxe bridge-utils syslinux squashfs-tools genisoimage libvde0 vde2 kvm
+# ubuntu-vm-builder kvm-pxe bridge-utils syslinux squashfs-tools genisoimage 
+
+# don't think we need:
+# vde2 kvm ubuntu-virt-server libvde0 
 
 required_inputs=(
   TYPE="type of image to build (options are base, psm)"
-  DEST="build image in this destination directory"
+  DESTINATION_DIR="build image in this destination directory"
 ) 
+
 
 # parse command line inputs and ensure all required inputs are set
 smart_parse $@
@@ -14,13 +21,53 @@ if ! verify_inputs required_inputs[@]; then
   return 1
 fi
 
-release=natty
-version=2
-hypervisor=kvm
+if test -z $RELEASE; then 
+  RELEASE=natty
+fi 
 
-echo "SHEEPMOD = ${SHEEP_PARENT_MODULE_DIR}"
+if test -z $HYPERVISOR; then 
+  HYPERVISOR=kvm
+fi 
 
-vmname=ubuntu-${TYPE}-${hypervisor}-${release}-${version}
+if test -z $INSTALL_MIRROR; then 
+  INSTALL_MIRROR=http://127.0.0.1:3142/ubuntu
+fi 
+
+if test -z $BURNIN_MIRROR; then 
+  BURNIN_MIRROR=http://127.0.0.1:3142/ubuntu
+fi 
+
+
+options=(
+  '--tmpfs 2048'
+  '--part /tmp/vmbuilder.part'
+  '--tmpfs 2048'
+  '--domain local'
+  '--arch amd64'
+  '--mem 1024'
+  '--user test'
+  '--pass test'
+  '--install-mirror $INSTALL_MIRROR'
+  '--install-security-mirror $INSTALL_MIRROR'
+  '--mirror $INSTALL_MIRROR'
+  '--security-mirror $INSTALL_MIRROR'
+  '--dest $DESTINATION_DIR'
+  '--components main,universe,multiverse,restricted'
+  '--addpkg acpid'
+  '--addpkg vim'
+  '--addpkg curl'
+  '--addpkg wget'
+  '--addpkg emacs23-nox'
+  '--addpkg openssh-server'
+  '--addpkg avahi-daemon'
+  '--addpkg bash-completion'
+  '--addpkg vlan'
+  '--debug'
+)
+
+
+vmname=ubuntu-${TYPE}-${HYPERVISOR}-${RELEASE}
+
 
 # CUSTOM PARTITIONS
 cat <<EOF > /tmp/vmbuilder.part
@@ -29,66 +76,49 @@ swap 1000
 /var 20000
 EOF
 
-if [ "$TYPE" = "psm" ]; then
-declare -a build_steps=( "time sudo ubuntu-vm-builder $hypervisor $release \
-  --execscript $(pwd)/setup-server \
-  --tmpfs 2048 \
-  --domain ermal14.com \
-  --dest $DEST/${vmname} \
-  --arch amd64 \
-  --hostname psm \
-  --mem 1024 \
-  --user test \
-  --pass test \
-  --ip 192.168.20.11 \
-  --mask 255.255.255.0 \
-  --net 192.168.20.11 \
-  --gw 192.168.20.1 \
-  --dns 8.8.8.8 \
-  --bcast 192.168.20.255 \
-  --bridge br0 \
-  --install-mirror http://mirror.anl.gov/ubuntu \
-  --mirror http://mirror.anl.gov/ubuntu \
-  --components main,universe,multiverse,restricted \
-  --addpkg acpid \
-  --addpkg vim \
-  --addpkg curl \
-  --addpkg wget \
-  --addpkg emacs23-nox \
-  --addpkg openssh-server \
-  --addpkg avahi-daemon \
-  --addpkg bash-completion \
-  --addpkg rsync \
-  --addpkg vlan \
-  --debug"
-  "cd $DEST"
-  "mv $vmname/*.qcow2 $vmname.qcow2 "
-  "rm -rf $vmname"
-)
-elif [ "$TYPE" = "base" ]; then
-  if [[ "$OUTFILE" == "" ]]; then
-    echo "ARGUMENT ERROR: please set --outfile for .tgz destination"
+
+vm_build_command="time sudo ubuntu-vm-builder $HYPERVISOR $RELEASE"
+for i in ${options[@]}; do 
+  vm_build_command+=" $i"
+done
+
+case "$TYPE" in 
+  psm)
+    vm_build_command+="
+      --execscript $(pwd)/setup-server \
+      --hostname psm \
+      --ip 192.168.20.11 \
+      --mask 255.255.255.0 \
+      --net 192.168.20.11 \
+      --gw 192.168.20.1 \
+      --dns 8.8.8.8 \
+      --bcast 192.168.20.255 \
+      --bridge br0 \
+    "
+  ;;
+  base)
+    vm_build_command+="
+      --execscript $(pwd)/setup-base \
+      --hostname basebox \
+    "
+  ;;
+ 
+  *) 
+    echo "VM type not recognized.  Known types are psm, base"
     exit 1
-  fi
-  declare -a build_steps=( 
-    "sudo rm -rf $DEST"
-    "sudo rm -rf $OUTFILE"
-    "sudo mkdir -p $DEST"
-    "sudo mount -t tmpfs -o size=4g tmpfs $DEST"
-    "sudo time debootstrap --variant buildd --verbose --include=linux-image-server,linux-headers-generic,grub,acpid,vim,curl,wget,emacs23-nox,openssh-server,avahi-daemon,bash-completion,vlan natty $DEST http://mirror.anl.gov/ubuntu"
-    "sudo $(pwd)/setup-base $DEST"
-    "cd $DEST"
-    "sudo time tar -czf $OUTFILE *"
-    "cd .."
-    "sudo umount $DEST"
-  )
-else
-  echo "VM type not recognized.  Known types are psm, base"
-  exit 1
-fi
+  ;;
+esac
+
+
+
+declare -a build_steps=(
+  "$vm_build_command"
+  "mv $DESTINATION_DIR/*.qcow2 $DESTINATION_DIR/$vmname.qcow2"
+)
+
 
 declare -a build_checks=(
-  "test -f $DEST/etc/lsb_release"
+  "test -f $DESTINATION_DIR/$vmname.qcow2"
 )
 
 
