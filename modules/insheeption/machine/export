@@ -113,7 +113,7 @@ cat <<EOF > $OUT
 
   ],
   "dns_search": "",
-  "state": "os_install_complete",
+  "state": "os_install",
   "state_info": {
   },
   "gateway_ip": "192.168.20.1",

@@ -7,8 +7,9 @@ required_inputs=(
   IMAGE=/path/to/image
   MEMORY="how much memory to give the vm"
   MACHINE_DISK="the machines disk"
-  VNC_DISPLAY="some desc"
-  SWITCH_NAME="name of switch"
+  VNC_DISPLAY="eg. :1 or :2 must be unique"
+  NETWORK_MODE="Either bridge or switch"
+  SWITCH_NAME="name of switch, also used as tapname in bridge mode (keep it short)"
   PIDFILE="pidfile"
 )
 
@@ -37,7 +38,7 @@ if get_hash /machines/$VM_NAME > /dev/null; then
 fi
 
 # Adding new record
-cat <<EOC | put_hash /machines/$HOSTNAME
+cat <<EOC | put_hash /machines/$VM_NAME
 image=$IMAGE
 memory=$MEMORY
 vnc_display=$VNC_DISPLAY

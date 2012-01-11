@@ -20,24 +20,53 @@ eval $(get_hash /machines/${VM_NAME})
 eval $(get_hash /switches/${switch_name})
 
 # unless it's already running
-if ! kill -0 $(cat $pidfile) > /dev/null; then
+if ! kill -0 $(cat $pidfile) 2>&1 > /dev/null; then
 
   # clone the qcow image
   $SHEEP_PARENT_MODULE_DIR/root/bin/qemu-img create -f qcow2 -b $image $machine_disk
 
   # build command line for each nic (doing 4)
   net_command=""
-  for eth_num in 0 1 2 3
-  do
-    net_command=$net_command" -net vde,sock=$socket_dir,vlan=10$eth_num -net nic,model=virtio,vlan=10$eth_num,macaddr=${macaddress_eth[$eth_num]} "
-  done
+  if [[ "$NETWORK_MODE" == "bridge" ]]; then
+    for eth_num in {0..3}
+    do
+      net_command=$net_command" -net tap,script=no,ifname=mtap_$eth_num,vlan=10$eth_num -net nic,model=virtio,vlan=10$eth_num,macaddr=${macaddress_eth[$eth_num]} "
+    done
+  elif [[ "$NETWORK_MODE" == "switch ]]; then
+    for eth_num in {0..3}
+    do
+      net_command=$net_command" -net vde,sock=$socket_dir,vlan=10$eth_num -net nic,model=virtio,vlan=10$eth_num,macaddr=${macaddress_eth[$eth_num]} "
+    done
+  else 
+    echo "FATAL: invalid network_mode specified.  Must be one of switch, bridge."
+    exit 1
+  fi
+  
 
   # launch qemu-kvm 
-  $SHEEP_PARENT_MODULE_DIR/root/bin/qemu-kvm -vnc $vnc_display -m $memory \
+  sudo $SHEEP_PARENT_MODULE_DIR/root/bin/qemu-kvm -vnc $vnc_display -m $memory \
     -hda $machine_disk \
     $net_command \
-    -smp 2cores \
+    -smp 4cores \
     -pidfile $pidfile -daemonize 
+
+  # BRIDGE MODE SETUP
+  # TODO: taps require uniqueness..
+  if [[ "$NETWORK_MODE" == "bridge" ]]; then
+    for eth_num in {0..3}
+    do
+      public_iface=eth0
+      tapname=${SWITCH_NAME}${eth_num}
+		  sudo brctl addbr br0 > /dev/null || true 
+		  echo "Bringing up $tapname for bridged mode..."
+		  sudo /sbin/ifconfig $tapname 0.0.0.0 promisc up
+		  echo "Adding $tapname to br0"
+		  sudo /usr/sbin/brctl addif br0 $tapname
+		  sleep 2
+    done
+    sudo /usr/sbin/brctl addif br0 $public_iface
+  fi
+
   echo $VM_NAME launched.
 else
   echo $VM_NAME is already running. Taking no action.
