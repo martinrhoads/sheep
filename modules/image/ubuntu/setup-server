@@ -5,11 +5,8 @@ imagedir=$1
 # change home to be inside chroot
 export 
 
-perl -pi -e "s%^127.0.1.1.*\n%%" $imagedir/etc/hosts
-echo 'psm' > $imagedir/etc/hostname
-echo '127.0.0.1 psm.local psm' >> $imagedir/etc/hosts
-chroot $imagedir hostname psm
-chroot $imagedir gem install bundler --no-rdoc --no-ri
+echo psm > $imagedir/etc/hostname
+
 
 cs_chef_dir=/home/jeremy/shared/cs-chef
 pod_services_dir=/home/jeremy/shared/pod-services

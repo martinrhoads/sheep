@@ -1,17 +1,14 @@
 
-# -*- mode: shell-script -*-
+
+# -*- mode: shell-script -*- 
 
 # you need to make sure the following packages are installed 
-# ubuntu-vm-builder kvm-pxe bridge-utils syslinux squashfs-tools genisoimage 
-
-# don't think we need:
-# vde2 kvm ubuntu-virt-server libvde0 
+# ubuntu-virt-server ubuntu-vm-builder kvm-pxe bridge-utils syslinux squashfs-tools genisoimage libvde0 vde2 kvm
 
 required_inputs=(
   TYPE="type of image to build (options are base, psm)"
   DESTINATION_DIR="build image in this destination directory"
 ) 
-
 
 # parse command line inputs and ensure all required inputs are set
 smart_parse $@
@@ -21,104 +18,37 @@ if ! verify_inputs required_inputs[@]; then
   return 1
 fi
 
+
 if test -z $RELEASE; then 
   RELEASE=natty
 fi 
 
-if test -z $HYPERVISOR; then 
-  HYPERVISOR=kvm
-fi 
 
 if test -z $INSTALL_MIRROR; then 
   INSTALL_MIRROR=http://127.0.0.1:3142/ubuntu
 fi 
 
-if test -z $BURNIN_MIRROR; then 
-  BURNIN_MIRROR=http://127.0.0.1:3142/ubuntu
-fi 
 
-
-options=(
-  '--tmpfs 2048'
-  '--part /tmp/vmbuilder.part'
-  '--tmpfs 2048'
-  '--domain local'
-  '--arch amd64'
-  '--mem 1024'
-  '--user test'
-  '--pass test'
-  '--install-mirror $INSTALL_MIRROR'
-  '--install-security-mirror $INSTALL_MIRROR'
-  '--mirror $INSTALL_MIRROR'
-  '--security-mirror $INSTALL_MIRROR'
-  '--dest $DESTINATION_DIR'
-  '--components main,universe,multiverse,restricted'
-  '--addpkg acpid'
-  '--addpkg vim'
-  '--addpkg curl'
-  '--addpkg wget'
-  '--addpkg emacs23-nox'
-  '--addpkg openssh-server'
-  '--addpkg avahi-daemon'
-  '--addpkg bash-completion'
-  '--addpkg vlan'
-  '--debug'
-)
-
-
-vmname=ubuntu-${TYPE}-${HYPERVISOR}-${RELEASE}
-
-
-# CUSTOM PARTITIONS
-cat <<EOF > /tmp/vmbuilder.part
-root 8000
-swap 1000
-/var 20000
-EOF
-
-
-vm_build_command="time sudo ubuntu-vm-builder $HYPERVISOR $RELEASE"
-for i in ${options[@]}; do 
-  vm_build_command+=" $i"
-done
-
-case "$TYPE" in 
-  psm)
-    vm_build_command+="
-      --execscript $(pwd)/setup-server \
-      --hostname psm \
-      --ip 192.168.20.11 \
-      --mask 255.255.255.0 \
-      --net 192.168.20.11 \
-      --gw 192.168.20.1 \
-      --dns 8.8.8.8 \
-      --bcast 192.168.20.255 \
-      --bridge br0 \
-    "
-  ;;
-  base)
-    vm_build_command+="
-      --execscript $(pwd)/setup-base \
-      --hostname basebox \
-    "
-  ;;
- 
-  *) 
-    echo "VM type not recognized.  Known types are psm, base"
-    exit 1
-  ;;
-esac
-
-
-
-declare -a build_steps=(
-  "$vm_build_command"
-  "mv $DESTINATION_DIR/*.qcow2 $DESTINATION_DIR/$vmname.qcow2"
+declare -a build_steps=( 
+  "sudo umount -l $DESTINATION_DIR ||:"
+  "sudo rm -rf $DESTINATION_DIR"
+  "sudo rm -rf $OUTFILE"
+  "sudo mkdir -p $DESTINATION_DIR"
+  "sudo mount -t ramfs -o size=20m ramfs $DESTINATION_DIR"
+  "sudo time debootstrap --variant buildd --verbose --include=linux-image-server,linux-headers-generic,grub,acpid,vim,curl,wget,emacs23-nox,openssh-server,avahi-daemon,bash-completion,vlan $RELEASE $DESTINATION_DIR $INSTALL_MIRROR"
+  "perl -pi -e "s%^127.0.1.1.*\n%%" $DESTINATION_DIR/etc/hosts"
+  "echo '127.0.0.1 ubuntu.local ubuntu' >> $DESTINATION_DIR/etc/hosts"
+  "chroot $DESTINATION_DIR hostname ubuntu"
+  "sudo $(pwd)/setup-base $DESTINATION_DIR"
+  # "cd $DESTINATION_DIR"
+  # "sudo time tar -czf $OUTFILE *"
+  # "cd .."
+  # "sudo umount $DESTINATION_DIR"
 )
 
 
 declare -a build_checks=(
-  "test -f $DESTINATION_DIR/$vmname.qcow2"
+  "test -f $DESTINATION_DIR/etc/lsb_release"
 )
 
 

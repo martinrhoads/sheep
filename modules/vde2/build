@@ -14,6 +14,8 @@ build_steps=(
 #    "autoreconf -fi"
     "./configure --prefix=$SHEEP_PARENT_MODULE_DIR/root --enable-experimental"
     "make && make install "
+    "cd .."
+    "rm -rf vde2-2.3.2"
 )
 
 build_checks=(
