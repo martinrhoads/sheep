@@ -4,64 +4,57 @@
 set -e
 set -x 
 
-# This script will invoke the image builder and copy that image to a usb key
-# and initiliaze that key for booting
-
 # make sure you have these packages installed 
 # syslinux mbr mtools
 
-# make sure that this is set to where your usb key is mounted
-usb_device=/dev/sdb
 
-usb_mount1=/tmp/usb1
-usb_mount2=/tmp/usb2
+cd $SHEEP_PARENT_MODULE_DIR
+
 image_build_dir=/tmp/image
 
-: <<COMMENTBLOCK
+my_dir=$SHEEP_PARENT_MODULE_DIR
+my_ramdisk=$my_dir/ramdisk
 
-require image ubuntu build --destination-dir $image_build_dir
+image1=$my_ramdisk/image1
+image2=$my_ramdisk/image2
 
-COMMENTBLOCK
+image_mount1=$my_dir/mnt/image1
+image_mount2=$my_dir/mnt/image2
 
-sudo modprobe usb-storage
-sudo umount -l  ${usb_device}1 ||:
-sudo umount -l  ${usb_device}2 ||:
-echo "zeroing out usb stick..."
-#sudo dd if=/dev/zero of=$usb_device ||:
+my_loopback_device1=$(sudo losetup -f)
+my_loopback_device2=$(sudo losetup -f)
 
+require system ramfs_umount --destination-dir $my_ramdisk
+require system ramfs_mount --destination-dir $my_ramdisk
 
-echo "creating partitions..." 
-sudo parted -s $usb_device mklabel msdos
-echo "n
-p
-1
+rm -rf $image1
+rm -rf $image2
+dd if=/dev/zero of=$image1 bs=1M count=500
+dd if=/dev/zero of=$image2 bs=1M count=1500
 
-+1G
-n
-p
-2
+mkfs.vfat -F 32 -n ubuntu $image1 -I
+mkfs.xfs $image2
 
+mkdir -p $image_mount1 mnt/image2
 
-a
-1
-w" | sudo fdisk $usb_device
+if mount | grep $image_mount1; then
+  sudo umount $image_mount1
+fi
+if mount | grep $image_mount2; then 
+  sudo umount $image_mount2
+fi
 
-
-echo "formatting usb stick..."
-sudo mkfs.vfat -F 32 -n ubuntu ${usb_device}1 -I
-sudo mkfs.xfs -f ${usb_device}2
-
-mkdir -p $usb_mount1
-mkdir -p $usb_mount2
-
-sudo mount ${usb_device}1 $usb_mount1
-sudo mount ${usb_device}2 $usb_mount2
+sudo mount -o loop $image1 $image_mount1 
+sudo mount -o loop $image2 $image_mount2
 
 
 #sudo chown -R root:root $image_build_dir
 echo "copying image to usb disk"
-sudo rsync -al $image_build_dir/ $usb_mount2/
-sudo cp /boot/vmlinuz-2.6.38-13-server $usb_mount1/vmlinuz
+sudo rsync -al $image_build_dir/ $image_mount2
+sudo cp /boot/vmlinuz-2.6.38-13-server $image_mount1/vmlinuz
+
+exit 0
+
 
 
 tmp_file=/tmp/usb-$RANDOM
