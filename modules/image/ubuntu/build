@@ -6,7 +6,6 @@
 # ubuntu-virt-server ubuntu-vm-builder kvm-pxe bridge-utils syslinux squashfs-tools genisoimage libvde0 vde2 kvm
 
 required_inputs=(
-  TYPE="type of image to build (options are base, psm)"
   DESTINATION_DIR="build image in this destination directory"
 ) 
 
@@ -35,11 +34,11 @@ declare -a build_steps=(
   "sudo rm -rf $OUTFILE"
   "sudo mkdir -p $DESTINATION_DIR"
   "sudo mount -t ramfs -o size=20m ramfs $DESTINATION_DIR"
-  "sudo time debootstrap --variant buildd --verbose --include=linux-image-server,linux-headers-generic,grub,acpid,vim,curl,wget,emacs23-nox,openssh-server,avahi-daemon,bash-completion,vlan $RELEASE $DESTINATION_DIR $INSTALL_MIRROR"
-  "perl -pi -e "s%^127.0.1.1.*\n%%" $DESTINATION_DIR/etc/hosts"
-  "echo '127.0.0.1 ubuntu.local ubuntu' >> $DESTINATION_DIR/etc/hosts"
-  "chroot $DESTINATION_DIR hostname ubuntu"
-  "sudo $(pwd)/setup-base $DESTINATION_DIR"
+  "sudo time debootstrap --variant buildd --verbose --include=linux-image-server,linux-headers-generic,grub,acpid,vim,curl,wget,emacs23-nox,openssh-server,avahi-daemon,bash-completion,vlan,syslinux,mtools $RELEASE $DESTINATION_DIR $INSTALL_MIRROR"
+  "sudo perl -pi -e "s%^127.0.1.1.*\n%%" $DESTINATION_DIR/etc/hosts"
+  "sudo bash -c \"echo 127.0.0.1 ubuntu.local ubuntu localhost >> $DESTINATION_DIR/etc/hosts\""
+#  "sudo chroot $DESTINATION_DIR hostname ubuntu"
+#  "sudo $(pwd)/setup-base $DESTINATION_DIR"
   # "cd $DESTINATION_DIR"
   # "sudo time tar -czf $OUTFILE *"
   # "cd .."
@@ -48,7 +47,8 @@ declare -a build_steps=(
 
 
 declare -a build_checks=(
-  "test -f $DESTINATION_DIR/etc/lsb_release"
+  true
+  "test -f $DESTINATION_DIR/etc/lsb-release"
 )
 
 

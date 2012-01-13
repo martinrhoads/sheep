@@ -1,0 +1,103 @@
+
+# -*- mode: shell-script -*- 
+
+set -e
+set -x 
+
+# This script will invoke the image builder and copy that image to a usb key
+# and initiliaze that key for booting
+
+# make sure that this is set to where your usb key is mounted
+usb_device=/dev/sdb
+
+# make sure you have these packages installed 
+# syslinux mbr mtools
+
+
+usb_mount1=/tmp/usb1
+usb_mount2=/tmp/usb2
+image_build_dir=/tmp/image
+
+: <<COMMENTBLOCK
+
+require image ubuntu build --destination-dir $image_build_dir
+
+COMMENTBLOCK
+
+sudo modprobe usb-storage
+sudo umount -l  ${usb_device}1 ||:
+sudo umount -l  ${usb_device}2 ||:
+echo "zeroing out usb stick..."
+#sudo dd if=/dev/zero of=$usb_device ||:
+
+
+echo "creating partitions..." 
+sudo parted -s $usb_device mklabel msdos
+echo "n
+p
+1
+
++1G
+n
+p
+2
+
+
+a
+1
+w" | sudo fdisk $usb_device
+
+
+echo "formatting usb stick..."
+sudo mkfs.vfat -F 32 -n ubuntu ${usb_device}1 -I
+sudo mkfs.xfs -f ${usb_device}2
+
+mkdir -p $usb_mount1
+mkdir -p $usb_mount2
+
+sudo mount ${usb_device}1 $usb_mount1
+sudo mount ${usb_device}2 $usb_mount2
+
+
+#sudo chown -R root:root $image_build_dir
+echo "copying image to usb disk"
+sudo rsync -al $image_build_dir/ $usb_mount2/
+sudo cp /boot/vmlinuz-2.6.38-13-server $usb_mount1/vmlinuz
+
+
+tmp_file=/tmp/usb-$RANDOM
+cat<<EOF>$tmp_file
+usbhid
+usb_storage
+vfat
+msdos
+hid
+EOF
+
+sudo mv $tmp_file /etc/initramfs-tools/modules
+sudo mkinitramfs -o $usb_mount1/initrd.img
+sudo umount ${usb_device}1 -l 
+sudo umount ${usb_device}2 -l 
+sudo syslinux -maf ${usb_device}1
+sudo syslinux ${usb_device}1
+sudo install-mbr --force $usb_device
+
+
+# get uuid of linux partition
+eval $(blkid ${usb_device}2 | awk '{print $2}')
+
+sudo mount ${usb_device}1 $usb_mount1
+tmp_file=/tmp/usb-$RANDOM
+cat<<EOF>$tmp_file
+default persistent
+label persistent
+  menu label ^Use Ubuntu in persistent mode
+  kernel vmlinuz
+  append initrd=initrd.img root=UUID=${UUID} --
+EOF
+sudo mv $tmp_file $usb_mount1/syslinux.cfg
+sudo umount ${usb_device}1
+
+echo "unmounting usb stick and installing syslinux"
+sudo eject $usb_device
+echo "all done!"
