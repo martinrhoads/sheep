@@ -49,15 +49,12 @@ sudo mount -o loop $image2 $image_mount2
 
 
 #sudo chown -R root:root $image_build_dir
-echo "copying image to usb disk"
-sudo rsync -al $image_build_dir/ $image_mount2
+echo "copying image to disk"
+sudo rsync -al $image_build_dir/ $image_mount2/
 sudo cp /boot/vmlinuz-2.6.38-13-server $image_mount1/vmlinuz
 
-exit 0
 
-
-
-tmp_file=/tmp/usb-$RANDOM
+tmp_file=/tmp/mem-$RANDOM
 cat<<EOF>$tmp_file
 usbhid
 usb_storage
@@ -67,20 +64,16 @@ hid
 EOF
 
 sudo mv $tmp_file /etc/initramfs-tools/modules
-sudo mkinitramfs -o $usb_mount1/initrd.img
-sudo umount ${usb_device}1 -l 
-sudo umount ${usb_device}2 -l 
-sudo syslinux -maf ${usb_device}1
-sudo syslinux ${usb_device}1
-sudo install-mbr --force $usb_device
-sudo mount ${usb_device}1 $usb_mount1
-sudo umount ${usb_device}1
-sleep 2 
+sudo mkinitramfs -o $image_mount1/initrd.img
+
+sudo umount $image_mount1 -l 
+sudo umount $image_mount2 -l 
+
 
 # get uuid of linux partition
-eval $(blkid ${usb_device}2 | awk '{print $2}')
-sudo mount ${usb_device}1 $usb_mount1
-tmp_file=/tmp/usb-$RANDOM
+eval $(blkid $image2 | awk '{print $2}')
+sudo mount -o loop $image1 $image_mount1
+tmp_file=/tmp/mem-$RANDOM
 cat<<EOF>$tmp_file
 default persistent
 label persistent
@@ -88,9 +81,11 @@ label persistent
   kernel vmlinuz
   append initrd=initrd.img root=UUID=${UUID} --
 EOF
-sudo mv $tmp_file $usb_mount1/syslinux.cfg
-sudo umount ${usb_device}1
+sudo mv $tmp_file $image_mount1/syslinux.cfg
+sudo umount $image_mount1
 
-echo "unmounting usb stick and installing syslinux"
-sudo eject $usb_device
+# #sudo syslinux -maf $image1
+# syslinux $image1
+# sudo install-mbr --force $image1
+
 echo "all done!"
