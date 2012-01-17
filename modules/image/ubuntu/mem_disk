@@ -11,48 +11,42 @@ set -x
 cd $SHEEP_PARENT_MODULE_DIR
 
 image_build_dir=/tmp/image
-
 my_dir=$SHEEP_PARENT_MODULE_DIR
 my_ramdisk=$my_dir/ramdisk
+image=$my_ramdisk/image
+mount1=$my_dir/mnt/image1
+mount2=$my_dir/mnt/image2
 
-image1=$my_ramdisk/image1
-image2=$my_ramdisk/image2
+require image ubuntu build --destination-dir $image_build_dir
+require system ramfs_umount --mount-point $my_ramdisk
+require system ramfs_mount --mount-point $my_ramdisk
 
-image_mount1=$my_dir/mnt/image1
-image_mount2=$my_dir/mnt/image2
+# clean up 
+sudo umount -l $mount1 ||:
+sudo umount -l $mount2 ||:
+sudo kpartx -d $image ||:
+rm -rf $image
 
-my_loopback_device1=$(sudo losetup -f)
-my_loopback_device2=$(sudo losetup -f)
+dd if=/dev/zero of=$image bs=1M count=2048
+sudo parted --script $image mklabel msdos
+sudo parted --script $image mkpart primary 100 612
+sudo parted --script $image set 1 boot on
+sudo parted --script $image mkpart primary 613 2048
+mapper1=/dev/mapper/`sudo kpartx -l $image | head -n 1 | awk '{print $1}'`
+mapper2=/dev/mapper/`sudo kpartx -l $image | tail -n 1 | awk '{print $1}'`
+sudo kpartx -a $image 
 
-require system ramfs_umount --destination-dir $my_ramdisk
-require system ramfs_mount --destination-dir $my_ramdisk
+sudo mkfs.vfat -F 32 -n ubuntu $mapper1 -I
+sudo mkfs.ext3 $mapper2
 
-rm -rf $image1
-rm -rf $image2
-dd if=/dev/zero of=$image1 bs=1M count=500
-dd if=/dev/zero of=$image2 bs=1M count=1500
-
-mkfs.vfat -F 32 -n ubuntu $image1 -I
-mkfs.xfs $image2
-
-mkdir -p $image_mount1 mnt/image2
-
-if mount | grep $image_mount1; then
-  sudo umount $image_mount1
-fi
-if mount | grep $image_mount2; then 
-  sudo umount $image_mount2
-fi
-
-sudo mount -o loop $image1 $image_mount1 
-sudo mount -o loop $image2 $image_mount2
+mkdir -p $mount1 $mount2 
+sudo mount $mapper1 $mount1
+sudo mount $mapper2 $mount2
 
 
-#sudo chown -R root:root $image_build_dir
 echo "copying image to disk"
-sudo rsync -al $image_build_dir/ $image_mount2/
-sudo cp /boot/vmlinuz-2.6.38-13-server $image_mount1/vmlinuz
-
+sudo rsync -al $image_build_dir/ $mount2/ 
+sudo cp /boot/vmlinuz-2.6.38-12-generic $mount1/vmlinuz
 
 tmp_file=/tmp/mem-$RANDOM
 cat<<EOF>$tmp_file
@@ -64,15 +58,15 @@ hid
 EOF
 
 sudo mv $tmp_file /etc/initramfs-tools/modules
-sudo mkinitramfs -o $image_mount1/initrd.img
+sudo mkinitramfs -o $mount1/initrd.img
 
-sudo umount $image_mount1 -l 
-sudo umount $image_mount2 -l 
+sudo umount $mount1 -l 
+sudo umount $mount2 -l 
 
 
 # get uuid of linux partition
-eval $(blkid $image2 | awk '{print $2}')
-sudo mount -o loop $image1 $image_mount1
+eval $(blkid $mapper2 | awk '{print $2}')
+sudo mount -o loop $mapper1 $mount1
 tmp_file=/tmp/mem-$RANDOM
 cat<<EOF>$tmp_file
 default persistent
@@ -81,11 +75,12 @@ label persistent
   kernel vmlinuz
   append initrd=initrd.img root=UUID=${UUID} --
 EOF
-sudo mv $tmp_file $image_mount1/syslinux.cfg
-sudo umount $image_mount1
+sudo mv $tmp_file $mount1/syslinux.cfg
+sudo umount $mount1
 
-# #sudo syslinux -maf $image1
-# syslinux $image1
-# sudo install-mbr --force $image1
+sudo syslinux -maf $mapper1
+sudo install-mbr --force $image
+
+sudo kpartx -d $image
 
 echo "all done!"
