@@ -23,6 +23,8 @@ repo() {
   if ! test -d $SHEEP_DIR/cache/repos/$NAME; then 
     echo trying to download repo...
     git clone --bare $ORIGIN $SHEEP_DIR/cache/repos/$NAME
+  else # try to fetch 
+    git --git-dir=$SHEEP_DIR/cache/repos/$NAME fetch ||:
   fi
 
   mkdir -p $DESTINATION 
