@@ -47,7 +47,6 @@ declare -a build_steps=(
 
 
 declare -a build_checks=(
-  true
   "test -f $DESTINATION_DIR/etc/lsb-release"
 )
 

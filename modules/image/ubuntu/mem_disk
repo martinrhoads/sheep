@@ -46,19 +46,8 @@ sudo mount $mapper2 $mount2
 
 echo "copying image to disk"
 sudo rsync -al $image_build_dir/ $mount2/ 
-sudo cp /boot/vmlinuz-2.6.38-12-generic $mount1/vmlinuz
-
-tmp_file=/tmp/mem-$RANDOM
-cat<<EOF>$tmp_file
-usbhid
-usb_storage
-vfat
-msdos
-hid
-EOF
-
-sudo mv $tmp_file /etc/initramfs-tools/modules
-sudo mkinitramfs -o $mount1/initrd.img
+sudo cp $image_build_dir/vmlinuz $mount1/vmlinuz
+sudo cp $image_build_dir/initrd.img  $mount1/initrd.img 
 
 sudo umount $mount1 -l 
 sudo umount $mount2 -l 
