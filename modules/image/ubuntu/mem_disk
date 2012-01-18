@@ -65,7 +65,7 @@ sudo umount $mount2 -l
 
 
 # get uuid of linux partition
-eval $(blkid $mapper2 | awk '{print $2}')
+eval $(sudo blkid $mapper2 | awk '{print $2}')
 sudo mount -o loop $mapper1 $mount1
 tmp_file=/tmp/mem-$RANDOM
 cat<<EOF>$tmp_file
