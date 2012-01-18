@@ -1,0 +1,22 @@
+
+# -*- mode: shell-script -*-
+
+required_inputs=(
+  MOUNT_POINT="directory to mount the ramfs"
+)
+
+set -e
+
+smart_parse $@
+if test -z $MOUNT_POINT; then 
+  echo you did not specify the required params
+  return 1
+fi
+
+if mount | grep --quiet $MOUNT_POINT; then 
+  echo unmounting ramfs from $MOUNT_POINT
+  sudo umount $MOUNT_POINT -l
+else
+  echo no ramfs is mounted on $MOUNT_POINT
+  exit 0
+fi
