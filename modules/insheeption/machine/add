@@ -46,6 +46,7 @@ vm_name=$VM_NAME
 machine_disk=$MACHINE_DISK
 pidfile=$PIDFILE
 switch_name=$SWITCH_NAME
+network_mode=$NETWORK_MODE
 macaddress_eth[0]=$(generate_mac)
 macaddress_eth[1]=$(generate_mac)
 macaddress_eth[2]=$(generate_mac)

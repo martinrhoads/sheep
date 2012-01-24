@@ -1,0 +1,64 @@
+{
+  "id": "eb6befb8-eab1-461d-b9ff-fc5141390333",
+  "name": "nova_deploy_demo",
+  "traits": {
+    "chef_handler": {
+      "handler_path": "/tmp/chef_handlers"
+    },
+    "mysql": {
+      "server_root_password": "test",
+      "server_repl_password": "test",
+      "server_debian_password": "test",
+      "bind_address": "192.168.20.55"
+    },
+    "rabbitmq": {
+      "address": "192.168.20.55"
+    },
+    "nova": {
+      "libvirt_type": "qemu",
+      "vlan_id_start": 1011,
+      "network": "VlanManager",
+      "api": "192.168.20.55",
+      "access_key": "access",
+      "routing_source_ip": "192.168.20.55",
+      "glance": {
+        "address": "192.168.20.55:9292"
+      },
+      "ip_blocks": [
+        "172.31.21.0/24"
+      ],
+      "secret_key": "num",
+      "secret_networks": "1",
+      "mysql": {
+        "user": "nova",
+        "password": "novapass",
+        "database": "nova",
+        "host": "192.168.20.55"
+      },
+      "opsnet_glance_api_ip": "192.168.20.55",
+      "network_size": "255",
+      "opsnet_glance_api_port": "9292",
+      "public_interface": "eth0",
+      "vlan_interface": "eth2",
+      "rabbit": {
+        "port": "5672",
+        "user": "nova",
+        "password": "test",
+        "vhost": "/nova",
+        "address": "192.168.20.55"
+      },
+      "fixed_range": "172.31.21.0/22",
+      "fixed_range_v4": "172.31.21.0/22",
+      "objectstore": {
+        "address": "192.168.20.55"
+      },
+      "flat_interface": "eth2"
+    },
+    "resolver": {
+      "domain": "cloudscaling.com"
+    }
+  },
+  "machines": [
+    "305329c3-e558-4ac8-ad35-042fc9663c58"
+  ]
+}

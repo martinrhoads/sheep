@@ -1,4 +1,4 @@
-
+set -e
 
 # -*- mode: shell-script -*- 
 
@@ -34,20 +34,21 @@ declare -a build_steps=(
   "sudo rm -rf $OUTFILE"
   "sudo mkdir -p $DESTINATION_DIR"
   "sudo mount -t ramfs -o size=20m ramfs $DESTINATION_DIR"
-  "sudo time debootstrap --variant buildd --verbose --include=linux-image-server,linux-headers-generic,grub,acpid,vim,curl,wget,emacs23-nox,openssh-server,avahi-daemon,bash-completion,vlan,syslinux,mtools $RELEASE $DESTINATION_DIR $INSTALL_MIRROR"
-  "sudo perl -pi -e "s%^127.0.1.1.*\n%%" $DESTINATION_DIR/etc/hosts"
-  "sudo bash -c \"echo 127.0.0.1 ubuntu.local ubuntu localhost >> $DESTINATION_DIR/etc/hosts\""
-#  "sudo chroot $DESTINATION_DIR hostname ubuntu"
-#  "sudo $(pwd)/setup-base $DESTINATION_DIR"
-  # "cd $DESTINATION_DIR"
-  # "sudo time tar -czf $OUTFILE *"
-  # "cd .."
-  # "sudo umount $DESTINATION_DIR"
+  "sudo mkdir -p $DESTINATION_DIR/dev"
+  "sudo mkdir -p $DESTINATION_DIR/proc"
+  "sudo mkdir -p $DESTINATION_DIR/sys"
+  "sudo mount --bind /dev $DESTINATION_DIR/dev/"
+  "sudo mount proc $DESTINATION_DIR/proc -t proc"
+  "sudo mount sysfs $DESTINATION_DIR/sys -t sysfs"
+  "sudo time debootstrap --variant buildd --verbose --include=ubuntu-standard,console-setup,kbd,console-terminus,xfsprogs,sudo,ureadahead,linux-image-server,linux-headers-generic,grub,grub-pc,acpid,vim,curl,wget,emacs23-nox,openssh-server,avahi-daemon,bash-completion,vlan $RELEASE $DESTINATION_DIR $INSTALL_MIRROR"
+  "sudo $(pwd)/setup-base $DESTINATION_DIR"
+  "sudo umount $DESTINATION_DIR/proc ||true"
+  "sudo umount $DESTINATION_DIR/sys ||true"
+  "sudo umount $DESTINATION_DIR/dev ||true"
 )
 
-
 declare -a build_checks=(
-  "test -f $DESTINATION_DIR/etc/lsb-release"
+  "test -f $DESTINATION_DIR/vmlinuz"
 )
 
 

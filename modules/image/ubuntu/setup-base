@@ -1,22 +1,26 @@
 #!/bin/bash -ex 
 
-
 imagedir=$1
 
-# change home to be inside chroot
-export 
+echo "deb http://127.0.0.1:3142/ubuntu natty main restricted universe multiverse" > $imagedir/etc/apt/sources.list
 
-echo 'basebox' > $imagedir/etc/hostname
+# change home to be inside chroot
+export
+
+# fix up grub defaults
+sed -i.orig 's%GRUB_CMDLINE_LINUX_DEFAULT=.*%GRUB_CMDLINE_LINUX_DEFAULT="nosplash nomodeset text INIT_VERBOSE=yes init=/sbin/init -v noplymouth"%' $imagedir/etc/default/grub
+sed -i.orig 's%GRUB_TIMEOUT=.*%GRUB_TIMEOUT=2%' $imagedir/etc/default/grub
 
 cd `dirname $0`
-cp install_chef.sh ${imagedir}/root/install_chef.sh
-chmod +x ${imagedir}/root/install_chef.sh
-chroot $imagedir mv /sbin/initctl /sbin/initctl.bak
-chroot $imagedir dpkg-divert --local --rename --add /sbin/initctl
-chroot $imagedir ln -s /bin/true /sbin/initctl
-chroot $imagedir apt-get update 
-chroot $imagedir apt-get install -y libffi5 
-chroot $imagedir /root/install_chef.sh 
+cp chroot_script.sh ${imagedir}/root/chroot_script.sh
+chmod +x ${imagedir}/root/chroot_script.sh
+chroot $imagedir /root/chroot_script.sh 
+
+#chroot $imagedir mv /sbin/initctl /sbin/initctl.bak
+#chroot $imagedir dpkg-divert --local --rename --add /sbin/initctl
+#chroot $imagedir ln -s /bin/true /sbin/initctl
+#chroot $imagedir apt-get update 
+#chroot $imagedir apt-get install -y libffi5 
 
 # Ubuntu base doesn't have sudoers.d support by default.
 mkdir -p /etc/sudoers.d
@@ -56,6 +60,6 @@ cat << EOF >> $imagedir/etc/rc.local
 EOF
 sed -i -e 's/exit 0//' $imagedir/etc/rc.local
 
-chroot $imagedir mv /sbin/initctl.bak /sbin/initctl
+#chroot $imagedir mv /sbin/initctl.bak /sbin/initctl
 echo "deb http://mirror.anl.gov/ubuntu natty main restricted universe multiverse" > $imagedir/etc/apt/sources.list
 sync 

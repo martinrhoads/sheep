@@ -36,5 +36,4 @@ if ! [ -S ${socket_dir}/ctl ]; then
     sudo iptables -A OUTPUT -o $bridge -j ACCEPT
   fi
   sudo brctl addif $bridge $tapname || true
-  $execdir/slirpvde -socket $socket_dir -daemon -dhcp -network "$ip_block"
 fi

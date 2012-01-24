@@ -17,6 +17,8 @@ fi
 
 eval $(get_hash /machines/${VM_NAME})
 
+require insheeption machine export --vm-name $VM_NAME
+
 # unless it's already running
 if ! kill -0 $(cat $pidfile) 2>&1 > /dev/null; then
 
@@ -45,11 +47,11 @@ if ! kill -0 $(cat $pidfile) 2>&1 > /dev/null; then
 
   # launch qemu-kvm 
   #sudo only needed if in bridge mode
-  $SHEEP_PARENT_MODULE_DIR/root/bin/qemu-kvm -vnc $vnc_display -m $memory \
+  echo "Installing base system, please be patient (progress available on VNC display $vnc_display"
+  time $SHEEP_PARENT_MODULE_DIR/root/bin/qemu-kvm -vnc $vnc_display -m $memory \
     -hda $machine_disk \
     $net_command \
-    -smp 4cores \
-    -pidfile $pidfile -daemonize 
+    -smp 4cores 
 
   # BRIDGE MODE SETUP
   # TODO: taps require uniqueness..
@@ -67,8 +69,10 @@ if ! kill -0 $(cat $pidfile) 2>&1 > /dev/null; then
     done
     sudo /usr/sbin/brctl addif br0 $public_iface
   fi
-
-  echo $VM_NAME launched.
+  echo $VM_NAME halted.
+  echo $VM_NAME base system is installed.  
+  echo Use qemu-img commit $machine_disk if you are satisfied with the result.
+# TODO: qemu-commit type stuff
 else
   echo $VM_NAME is already running. Taking no action.
 fi

@@ -1,0 +1,39 @@
+
+
+# -*- mode: shell-script -*- 
+
+# you need to make sure the following packages are installed 
+# ubuntu-virt-server ubuntu-vm-builder kvm-pxe bridge-utils syslinux squashfs-tools genisoimage libvde0 vde2 kvm
+
+required_inputs=(
+  DESTINATION_DIR="build image in this destination directory"
+  TARFILE="filename with path for the newly generated image"
+) 
+
+# parse command line inputs and ensure all required inputs are set
+smart_parse $@
+if ! verify_inputs required_inputs[@]; then 
+  echo 
+  ./help
+  return 1
+fi
+
+require image ubuntu build --destination-dir $DESTINATION_DIR
+
+declare -a build_steps=( 
+    "sudo rm -rf $TARFILE"
+    "cd $DESTINATION_DIR"
+    "sudo tar -czf $TARFILE *"
+    "md5sum $TARFILE |cut -d ' ' -f 1 > $TARFILE.md5sum"
+    "cd .."
+)
+
+declare -a build_checks=(
+  "false"
+)
+
+declare -a spot_checks=(true)
+build --build-steps build_steps[@] \
+      --build-checks build_checks[@] \
+      --spot-checks spot_checks[@] 
+

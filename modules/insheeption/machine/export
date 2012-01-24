@@ -3,8 +3,9 @@ export SHEEP_PARENT_MODULE_DIR=$(dirname $SHEEP_PARENT_MODULE_DIR)
 require insheeption build
 required_inputs=(
   VM_NAME="hostname of machine"
-  OUT="filename to dump the .json data of this machine"
 )
+
+OUTFILE=/tmp/machine_temp_export.json
 
 # parse command line inputs and ensure all required inputs are set
 smart_parse $@
@@ -16,11 +17,11 @@ fi
 
 eval $(get_hash /machines/${VM_NAME})
 
-cat <<EOF > $OUT
+cat <<EOF > $OUTFILE 
 {
   "id": "305329c3-e558-4ac8-ad35-042fc9663c58",
   "roles": [
-    "nova-base", "nova-controller", "nova-compute"
+    "nova-controller", "nova-compute"
   ],
   "interfaces": [
     {
@@ -28,27 +29,19 @@ cat <<EOF > $OUT
       "mac": "${macaddress_eth[0]}",
       "type": "physical",
       "plumbing": "static",
-      "bridge_ports": null,
       "netmask": "255.255.255.0",
-      "gateway": "192.168.20.1",
-      "broadcast": null,
+      "gateway": "10.1.0.254",
       "addresses": [
-        "192.168.20.55"
-      ],
-      "vlan_raw_device": null
+        "10.1.0.55"
+      ]
     },
     {
       "name": "eth1",
       "mac": "${macaddress_eth[1]}",
       "type": "physical",
       "plumbing": "static",
-      "bridge_ports": null,
-      "netmask": null,
-      "gateway": null,
-      "broadcast": null,
       "addresses": [
-      ],
-      "vlan_raw_device": null
+      ]
     },
     {
       "name": "eth2",
@@ -61,24 +54,17 @@ cat <<EOF > $OUT
       "mac": "${macaddress_eth[3]}",
       "type": "physical",
       "plumbing": "static",
-      "bridge_ports": null,
       "netmask": "255.255.255.0",
-      "gateway": null,
-      "broadcast": null,
       "addresses": [
         "172.31.20.55"
-      ],
-      "vlan_raw_device": null
+      ]
     },
 {
       "name": "vlan103",
       "mac": "52:54:00:00:00:06",
       "type": "physical",
       "plumbing": "static",
-      "bridge_ports": null,
       "netmask": "255.255.255.0",
-      "gateway": null,
-      "broadcast": null,
       "addresses": [
         "172.31.21.55"
       ],
@@ -89,26 +75,26 @@ cat <<EOF > $OUT
 
   ],
   "deployments": [
-    "eb6befb8-eab1-461d-b9ff-fc5141390333"
+    "eb6befb8-eab1-461d-b9ff-fc5141390333", 
+    "7b477f79-6c97-4039-9ce0-bbb4af397339"
   ],
   "traits": {
     "develop": {
       "cs_chef_dir": "/mnt/shared/cs-chef",
       "nfs": {
-        "server": "192.168.20.1",
+        "server": "10.1.0.2",
         "mounts": {
           "shared": "/export/shared"
         }
       }
     }
   },
-  "hostname": "base1",
+  "hostname": "${VM_NAME}",
   "domain": "cloudscaling.com",
   "management_interface": "eth0",
-  "ipmi_address": "172.16.5.21",
   "os": "ubuntu",
   "os_version": "11.04",
-  "type": "ipmi",
+  "type": "generic",
   "dns_nameservers": [
 
   ],
@@ -116,12 +102,24 @@ cat <<EOF > $OUT
   "state": "os_install",
   "state_info": {
   },
-  "gateway_ip": "192.168.20.1",
+  "gateway_ip": "10.1.0.254",
   "gateway_iface": "eth0"
 }
 EOF
 
 set +e
-curl -XDELETE 192.168.20.11/machines/${macaddress_eth[0]}
+echo "Creating Pod if not exists:"
+curl -XPOST -d@$(pwd)/pod.json 10.1.0.1/pods
+echo
+echo "Creating deployments if not exists:"
+curl -XDELETE 10.1.0.1/deployments/7b477f79-6c97-4039-9ce0-bbb4af397339
+curl -XDELETE 10.1.0.1/deployments/eb6befb8-eab1-461d-b9ff-fc5141390333
+curl -XPOST -d@$(pwd)/nova-vlan-demo.json 10.1.0.1/deployments
+curl -XPOST -d@$(pwd)/disk-traits.json 10.1.0.1/deployments
+echo
+echo "Re-creating machine"
+curl -XDELETE 10.1.0.1/machines/305329c3-e558-4ac8-ad35-042fc9663c58
 set -e
-curl -XPOST -d @${OUT} 192.168.20.11/machines
+curl -XPOST -d @${OUTFILE} 10.1.0.1/machines
+echo
+echo "Export to pod-services complete."

@@ -1,3 +1,4 @@
-require qemu-kvm build
+export SHEEP_PARENT_MODULE_DIR=$(dirname $SHEEP_PARENT_MODULE_DIR)
+#require qemu-kvm build
 #require image ubuntu build --type psm
 #require image ubuntu build --type base

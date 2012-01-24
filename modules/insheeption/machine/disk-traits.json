@@ -1,0 +1,97 @@
+{
+  "id": "7b477f79-6c97-4039-9ce0-bbb4af397339",
+  "name": "disk_traits",
+  "traits": {
+    "partition_map": {
+      "generic": {
+        "/": {
+          "size": "use_remainder",
+          "fs_type": "xfs",
+          "dev": "/dev/sda",
+          "partition": "1"
+        }
+      },
+      "onode": {
+        "/boot": {
+          "size": "256MB",
+          "fs_type": "ext3",
+          "dev": "/dev/sda",
+          "partition": "1"
+        },
+        "swap": {
+          "size": "256MB",
+          "fs_type": "swap",
+          "dev": "/dev/sda",
+          "partition": "2"
+        },
+        "/": {
+          "size": "use_remainder",
+          "fs_type": "xfs",
+          "dev": "/dev/sda",
+          "partition": "3"
+        },
+        "/var": {
+          "size": "use_all_space",
+          "fs_type": "xfs",
+          "dev": "/dev/sdb",
+          "partition": "1"
+        }
+      },
+      "cnode": {
+        "/boot": {
+          "size": "256MB",
+          "fs_type": "ext3",
+          "dev": "/dev/sda",
+          "partition": "1"
+        },
+        "swap": {
+          "size": "256MB",
+          "fs_type": "swap",
+          "dev": "/dev/sda",
+          "partition": "2"
+        },
+        "/": {
+          "size": "use_remainder",
+          "fs_type": "xfs",
+          "dev": "/dev/sda",
+          "partition": "3"
+        },
+        "/var": {
+          "size": "use_all_space",
+          "fs_type": "xfs",
+          "dev": "/dev/sdb",
+          "partition": "1"
+        }
+      },
+      "snode": {
+        "/boot": {
+          "size": "256MB",
+          "fs_type": "ext3",
+          "dev": "/dev/sda",
+          "partition": "1"
+        },
+        "swap": {
+          "size": "256MB",
+          "fs_type": "swap",
+          "dev": "/dev/sda",
+          "partition": "2"
+        },
+        "/": {
+          "size": "use_remainder",
+          "fs_type": "xfs",
+          "dev": "/dev/sda",
+          "partition": "3"
+        },
+        "/var": {
+          "size": "use_all_space",
+          "fs_type": "xfs",
+          "dev": "/dev/sdb",
+          "partition": "1"
+        }
+      }
+    }
+  },
+  "machines": [
+    "305329c3-e558-4ac8-ad35-042fc9663c58"
+  ]
+}
