@@ -45,6 +45,7 @@ sudo mount --bind /dev $tmp_mount/dev
 
 
 sudo rsync -a $SOURCE_DIRECTORY/ $tmp_mount/ 
+sudo sed -i.orig 's%GRUB_CMDLINE_LINUX_DEFAULT=.*%GRUB_CMDLINE_LINUX_DEFAULT="nosplash nomodeset text INIT_VERBOSE=yes init=/sbin/init -v noplymouth"%' $tmp_mount/etc/default/grub
 sudo chroot $tmp_mount/ grub-mkconfig -o /boot/grub/grub.cfg
 sudo chroot $tmp_mount/ grub-install --force $nbd
 sudo sed -i "s%$nbd%/dev/sda%" $tmp_mount/boot/grub/grub.cfg 
