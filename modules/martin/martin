@@ -42,10 +42,19 @@ git --git-dir=$SHEEP_DIR/.git/ --work-tree=$(pwd)/image/root/sheep/ reset --hard
 
 # customize the image
 chroot_commands=(
-  true
+  "true && true"
+  "touch /tmp/foo"
 )
 echo -e "${txtblu}  customizing image  ${txtrst}"
-require image customize --image-directory $(pwd)/image --chroot-commands chroot_commands[@]
+. ./customize --image-directory $(pwd)/image --chroot-commands chroot_commands[@]
+
+
+# package image
+echo -e "${txtblu}  packaging image  ${txtrst}"
+. ./package_for_kvm --source-directory $(pwd)/image --destination-image $(pwd)/martin.qcow2 --size 5
+
+
+# configure networking 
 
 
 

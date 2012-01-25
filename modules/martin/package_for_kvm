@@ -17,7 +17,7 @@ if ! verify_inputs required_inputs[@] ; then
 fi 
 
 if test -f $DESTINATION_IMAGE; then 
-  echo qcow2 image has already been created
+#  echo qcow2 image has already been created
   return 0
 fi 
 

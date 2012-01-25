@@ -27,7 +27,7 @@ build() {
   done
 
   if test -z $need_to_rebuild; then 
-    echo all build checks were ok so not building
+#    echo all build checks were ok so not building
     return 0
   fi
 

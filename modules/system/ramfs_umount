@@ -8,10 +8,7 @@ required_inputs=(
 set -e
 
 smart_parse $@
-if test -z $MOUNT_POINT; then 
-  echo you did not specify the required params
-  return 1
-fi
+verify_inputs required_inputs[@]
 
 if mount | grep --quiet $MOUNT_POINT; then 
   echo unmounting ramfs from $MOUNT_POINT

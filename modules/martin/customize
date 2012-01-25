@@ -39,8 +39,22 @@ sudo mount --bind /dev $IMAGE_DIRECTORY/dev
 sudo mount --bind /sys $IMAGE_DIRECTORY/sys
 
 
+declare -a chroot_commands=("${!CHROOT_COMMANDS}")
+
+for command in "${chroot_commands[@]}"; do 
+  if ! sudo chroot $IMAGE_DIRECTORY $command; then 
+    echo "${txtred}we failed to run the command '$command' inside the chroot${txtrst}"
+    FAILURE=1
+    break
+  fi
+done
 
 # remove all mounts 
 sudo umount -l $IMAGE_DIRECTORY/proc
 sudo umount -l $IMAGE_DIRECTORY/dev
 sudo umount -l $IMAGE_DIRECTORY/sys
+
+if ! test -z $FAILURE; then 
+  return 1
+fi
+
