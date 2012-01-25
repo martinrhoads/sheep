@@ -20,7 +20,7 @@ build() {
 
   need_to_rebuild=
   for i in "${build_checks[@]}"; do 
-    echo about to run $i
+#    echo about to run $i
     if ! `eval $i` ; then
       need_to_rebuild=1
     fi

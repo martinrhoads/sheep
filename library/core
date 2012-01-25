@@ -136,7 +136,13 @@ verify_inputs() {
     error_message="${i##*=}"
     if eval test -z \$$variable; then 
       if test $unset_parameters -eq 0; then 
-        echo "${txtred}the following required parameters were not set: ${txtrst}"
+	# print the help message if one was provided
+	if ! test -z $2 ; then 
+	  echo -en "${txtgrn}"
+	  eval echo \"\$$2\"
+	  echo -e "${txtrst}"
+	fi
+        echo "${txtred}The following required parameters were not set: ${txtrst}"
         echo
       fi
       user_friendly_name=$(echo $variable | sed 's/_/-/g' | tr '[:upper:]' '[:lower:]' )

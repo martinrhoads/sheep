@@ -1,0 +1,46 @@
+
+# -*- mode: shell-script -*- 
+
+HELP_TEXT=$(cat <<'END_HELP'
+
+Image Customizer
+
+This script is designed to customize an image. After supplying the required inputs, it will:
+
+  1. make the necessary mounts required to make the chroot usable
+  2. chroot into the image
+  3. execute the commands in the provided array
+  4. unmount what was setup in step 1
+
+END_HELP
+)
+
+# make sure that we exit upon any error
+set -e
+
+# list the required cli inputs to be used with the builtin parser
+required_inputs=(
+  IMAGE_DIRECTORY="directory to the image that you would like to customize"
+  CHROOT_COMMANDS="the name of an array which contains a list of commands to run inside the chroot"
+)
+
+# use builtin option parser
+smart_parse $@
+
+# verify required inputs were provided
+verify_inputs required_inputs[@] HELP_TEXT
+
+
+# begin real stuff:
+
+# mount some stuff 
+sudo mount -t proc none $IMAGE_DIRECTORY/proc 
+sudo mount --bind /dev $IMAGE_DIRECTORY/dev
+sudo mount --bind /sys $IMAGE_DIRECTORY/sys
+
+
+
+# remove all mounts 
+sudo umount -l $IMAGE_DIRECTORY/proc
+sudo umount -l $IMAGE_DIRECTORY/dev
+sudo umount -l $IMAGE_DIRECTORY/sys

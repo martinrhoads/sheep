@@ -1,0 +1,54 @@
+
+# -*- mode: shell-script -*- 
+set -e
+
+
+HELP_TEXT=$(cat <<'END_HELP'
+
+Martin 
+
+END_HELP
+)
+
+# thanks from http://stackoverflow.com/questions/1593051/how-to-programmatically-determine-the-current-checked-out-git-branch
+
+echo -e "${txtgrn}Starting Martin!${txtblu}"
+
+# Here we specify a list of the required parameters that must be supplied to run this tool. 
+required_inputs=(
+  PARAM="some parameter"
+)
+
+
+# we use the sheep builtin helper for parsing command line inputs
+smart_parse $@
+
+
+# we use the sheep builtin helper for enforcing the required inputs.
+verify_inputs required_inputs[@] HELP_TEXT
+
+
+# ensure there is an image in $(pwd)/image
+echo -e "${txtblu}  ensure image in $(pwd)/image  ${txtrst}"
+require image ubuntu build --destination-dir $(pwd)/image
+
+
+# checkout the current branch of sheep into $(pwd)/image/root/sheep/
+branch_name="$(git symbolic-ref HEAD 2>/dev/null)" && branch_name=${branch_name##refs/heads/} 
+echo -e "${txtblu}  checking out sheep branch '$branch_name' inside image  ${txtrst}"
+mkdir -p $(pwd)/image/root/sheep/
+git --git-dir=$SHEEP_DIR/.git/ --work-tree=$(pwd)/image/root/sheep/ reset --hard $branch_name > /dev/null 
+
+
+# customize the image
+chroot_commands=(
+  true
+)
+echo -e "${txtblu}  customizing image  ${txtrst}"
+require image customize --image-directory $(pwd)/image --chroot-commands chroot_commands[@]
+
+
+
+
+# done
+echo -e "${txtgrn}Done with Martin!${txtrst}"
