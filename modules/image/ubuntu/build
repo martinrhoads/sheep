@@ -34,7 +34,7 @@ declare -a build_steps=(
   "sudo rm -rf $OUTFILE"
   "sudo mkdir -p $DESTINATION_DIR"
   "sudo mount -t ramfs -o size=20m ramfs $DESTINATION_DIR"
-  "sudo time debootstrap --variant buildd --verbose --include=linux-image-server,linux-headers-generic,grub,acpid,vim,curl,wget,emacs23-nox,openssh-server,avahi-daemon,bash-completion,vlan,syslinux,mtools $RELEASE $DESTINATION_DIR $INSTALL_MIRROR"
+  "sudo time debootstrap --variant buildd --verbose --include=debconf-utils,linux-image-server,linux-headers-generic,grub-pc,acpid,vim,curl,wget,emacs23-nox,openssh-server,avahi-daemon,bash-completion,vlan,syslinux,mtools $RELEASE $DESTINATION_DIR $INSTALL_MIRROR"
   "sudo perl -pi -e "s%^127.0.1.1.*\n%%" $DESTINATION_DIR/etc/hosts"
   "sudo bash -c \"echo 127.0.0.1 ubuntu.local ubuntu localhost >> $DESTINATION_DIR/etc/hosts\""
 #  "sudo chroot $DESTINATION_DIR hostname ubuntu"

@@ -1,0 +1,61 @@
+
+# -*- mode: shell-script -*- 
+
+set -e
+#set -x
+
+required_inputs=(
+  SOURCE_DIRECTORY="directory to be converted to image"
+  DESTINATION_IMAGE="filename of final image"
+  SIZE="size of image"
+)
+
+smart_parse $@
+if ! verify_inputs required_inputs[@] ; then 
+  echo you did not provide the proper inputs to $0
+  return 1
+fi 
+
+if test -f $DESTINATION_IMAGE; then 
+  echo qcow2 image has already been created
+  return 0
+fi 
+
+
+tmp_image=/tmp/$RANDOM.qcow2
+tmp_mount=/tmp/$RANDOM.mount
+nbd=/dev/nbd0 
+if mount | grep --quiet $nbd; then 
+  sudo umount -l  $nbd
+fi 
+
+mkdir $tmp_mount
+sudo modprobe nbd max_part=63
+../insheeption/root/bin/qemu-img create $tmp_image ${SIZE}G
+sudo qemu-nbd --disconnect $nbd
+sudo qemu-nbd --connect $nbd $tmp_image # TODO: should be using sanbdoxed qemu for this
+sleep 1
+sudo mkfs.ext4 $nbd
+
+# begin mounting 
+sudo mount $nbd $tmp_mount
+sudo mkdir $tmp_mount/proc $tmp_mount/dev $tmp_mount/sys
+sudo mount -t proc none $tmp_mount/proc
+sudo mount --bind /dev $tmp_mount/dev 
+
+
+sudo rsync -a $SOURCE_DIRECTORY/ $tmp_mount/ 
+sudo chroot $tmp_mount/ grub-mkconfig -o /boot/grub/grub.cfg
+sudo chroot $tmp_mount/ grub-install --force $nbd
+sudo sed -i "s%$nbd%/dev/sda%" $tmp_mount/boot/grub/grub.cfg 
+sudo sync
+
+sudo umount $tmp_mount/proc
+sudo umount $tmp_mount/dev
+sudo umount $tmp_mount/
+# end mounting 
+
+sudo qemu-nbd --disconnect $nbd
+mv $tmp_image $DESTINATION_IMAGE
+rmdir $tmp_mount
+echo done converting image!
